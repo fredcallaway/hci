@@ -1,0 +1,14 @@
+these example sentences were generated with the commands:
+~/Git/hci/bitpar * echo '"draw a red square"' >> examples.txt
+~/Git/hci/bitpar * echo 'draw a red square' | tr ' ' '\12' | bitpar -v -q hci.gram hci.lex >>examples.txt
+
+"draw a red square"
+(VP (V draw)(NP (D a)(N-bar (A red)(N square))))
+"draw a triangle"
+(VP (V draw)(NP (D a)(N-bar (N triangle))))
+"make the circle blue"
+(VP (V make)(NP (D the)(N-bar (N circle)))(A blue)) #note tribranching structure
+"make a triangle under the square"
+(VP (V make)(NP (D a)(N-bar (N triangle)))(PP (P under)(NP (D the)(N-bar (N square))))) #again, tribranching
+"make a square next to the circle"
+(VP (V make)(NP (D a)(N-bar (N square)))(PP (P next)(PP (P to)(NP (D the)(N-bar (N circle))))))
