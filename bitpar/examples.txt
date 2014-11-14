@@ -1,14 +1,17 @@
 these example sentences were generated with the commands:
-~/Git/hci/bitpar * echo '"draw a red square"' >> examples.txt
-~/Git/hci/bitpar * echo 'draw a red square' | tr ' ' '\12' | bitpar -v -q hci.gram hci.lex >>examples.txt
+echo '"draw a red square"' >> examples.txt
+echo '"draw a red square"' | tr ' ' '\12' | bitpar -v -q hci.gram hci.lex  | tr '(' '[' | tr ')' ']' >>examples.txt
+parentheses are translated into brackets so the parses can be read by http://mshang.ca/syntree/
 
 "draw a red square"
-(VP (V draw)(NP (D a)(N-bar (A red)(N square))))
+[VP [V draw][NP [D a][N-bar [A red][N square]]]]
 "draw a triangle"
-(VP (V draw)(NP (D a)(N-bar (N triangle))))
+[VP [V draw][NP [D a][N-bar [N triangle]]]]
 "make the circle blue"
-(VP (V make)(NP (D the)(N-bar (N circle)))(A blue)) #note tribranching structure
+[VP [V make][NP [D the][N-bar [N circle]]][A blue]] #note tribranching structure
 "make a triangle under the square"
-(VP (V make)(NP (D a)(N-bar (N triangle)))(PP (P under)(NP (D the)(N-bar (N square))))) #again, tribranching
+[VP [V make][NP [D a][N-bar [N triangle]]][PP [P under][NP [D the][N-bar [N square]]]]] #again, tribranching
 "make a square next to the circle"
-(VP (V make)(NP (D a)(N-bar (N square)))(PP (P next)(PP (P to)(NP (D the)(N-bar (N circle))))))
+[VP [V make][NP [D a][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]
+"move the square next to the circle"
+[VP [V move][NP [D the][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]

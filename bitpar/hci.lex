@@ -15,6 +15,7 @@ that	D 1
 it	NP 1
 them	NP 1
 and	AND 1
+next	P 1
 to	P 1
 circle	N 1
 square	N 1
