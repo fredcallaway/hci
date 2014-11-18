@@ -1,0 +1,7 @@
+Python Functions We Need:
+
+String ("z") goes in. Gets defined as draw lambda z of whatever, modifier z, modifier z, gui. 
+Draw triggers Shape to be made. Which assigns and ID, which then gets applied to the modifiers. Shape has defaults and the modifiers update anything that they find. So the modifiers are their own fxs.
+
+LC output -> Parsing Function (This parses the LC output into the functions that need to run and puts them in a queue.) -> ID Function (Creates an object w/ default parameters & assigns it a unique ID & updates the "it" function's referent & moves previous "it" to list_of_objects_on_screen) -> Modifier Functions (e.g., Color, Shape, etc. These are separate functions that come from the parsed LC output and update the default parameters set by ID function. Modifiers are removed from the queue once their function runs. Draw stays in the queue while there are still modifier functions in the queue.) -> Everything in list_of_objects_on_screen gets put on screen.
+	 

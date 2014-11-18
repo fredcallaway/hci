@@ -1,7 +1,6 @@
 1 VP V NP
-1 VP V NP PP
-1 VP V NP A
-1 VP V NP PP
+1 VP VP PP
+1 VP VP AP
 1 NP D N-bar
 1 N-bar N
 1 N-bar A N-bar
