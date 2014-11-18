@@ -1,0 +1,7 @@
+#!/bin/bash
+# Usage: sh tree 'make the red square blue'
+
+PARSE=$(echo $1 | tr ' ' '\12'  |  bitpar -v -q hci.gram hci.lex  | tr '(' '[' | tr ')' ']')
+echo $PARSE
+F_PARSE=$(echo $PARSE | sed 's/ /%20/g')
+python -mwebbrowser http://mshang.ca/syntree/?$F_PARSE 2> /dev/null

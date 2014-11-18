@@ -2,6 +2,7 @@ these example sentences were generated with the commands:
 echo '"draw a red square"' >> examples.txt
 echo '"draw a red square"' | tr ' ' '\12' | bitpar -v -q hci.gram hci.lex  | tr '(' '[' | tr ')' ']' >>examples.txt
 parentheses are translated into brackets so the parses can be read by http://mshang.ca/syntree/
+you can also view a tree of any parse with: sh tree 'draw a red square'
 
 "draw a red square"
 [VP [V draw][NP [D a][N-bar [A red][N square]]]]
