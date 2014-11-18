@@ -1,7 +1,8 @@
+LambdaTest
+
 constants of type e : G
 constants of type <e,e> : C 
 constants of type <e,t> : S
-#not sure if we need an e,e relation, possibly for next to
 variables of type e : a-z
 variables of type <e,t> : P-Q
 variables of type t : p q
@@ -16,10 +17,9 @@ use rule predicate modification
 use rule lambda abstraction
 
 define gui: G_e
-define draw: LPLx[Draw(P,x)] 
-#replace Draw with python command
+define draw: LPLx[draw(P,x)] 
+#replace draw with python command
 define square: Lx[square(x)]
-define a: LP.P
 
 #colors
 define red: Lx[red(x)]
@@ -30,6 +30,10 @@ define blue: Lx[blue(x)]
 define purple: Lx[purple(x)]
 define white: Lx[white(x)]
 define black: Lx[black(x)]
+
+#functions
+define a: LP.P
+define the: LP[Iy(P(y))]
 
 
 exercise tree
