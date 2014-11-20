@@ -1,10 +1,10 @@
-1 VP V NP
-1 VP V SC
-1 VP VP PP
-1 NP D N-bar
-1 N-bar N
-1 N-bar A N-bar
-1 PP P NP
-1 PP P PP
-1 AP A
-1 SC NP A
+1 .VP .V .NP
+1 .VP .V .SC
+1 .VP .VP .PP
+1 .NP .D .N-bar
+1 .N-bar .N
+1 .N-bar .A .N-bar
+1 .PP .P .NP
+1 .PP .P .PP
+1 .AP .A
+1 .SC .NP .A

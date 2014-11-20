@@ -1,0 +1,16 @@
+#!/bin/bash
+
+PARSE=$1
+# make single words out of phrases
+PARSE="${PARSE//next to/next-to}"
+PARSE="${PARSE//on top of/on-top-of}"
+
+PARSE=$(echo $PARSE | tr ' ' '\12'  |  bitpar -v -q hci.gram hci.lex) # parse
+PARSE=$(echo $PARSE | tr '()' '[]') # brackets
+PARSE="${PARSE//make][.NP/make-1][.NP}" # make-1 for creation
+PARSE="${PARSE//make][.SC/make-2][.SC}" # make-2 for alteration
+
+
+echo $PARSE
+
+

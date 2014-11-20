@@ -16,3 +16,8 @@ you can also view a tree of any parse with: sh tree 'draw a red square'
 [VP [V make][NP [D a][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]
 "move the square next to the circle"
 [VP [V move][NP [D the][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]
+
+----
+
+[.VP [.V make-2][.SC [.NP [.D the][.N-bar [.A square][.N-bar [.A next-to][.N-bar [.A the][.N-bar [.N triangle]]]]]][.A blue]]]
+[.VP [.VP [.V make-1][.NP [.D a][.N-bar [.N square]]]][.PP [.P next-to][.NP [.D the][.N-bar [.A blue][.N-bar [.N triangle]]]]]]
