@@ -1,4 +1,6 @@
 #!/bin/bash
+cd $(echo `pwd` | sed 's/hci\/.*/\hci/') # cd to hci/
+cd bitpar
 
 PARSE=$1
 # make single words out of phrases
