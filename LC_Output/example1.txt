@@ -41,17 +41,20 @@ define draw: Lx[draw(x)]
 #make1 = draw; it creates a new object and puts it on the screen
 define make1: Lx[draw(x)]
 #make2 modifies the parameters of an existing object on the screen
-#define make2: LPLx[P(x)]
+#define make2: LP.P & LQ.Q
 
 #function words
 define a: LP.P
 define the: LP[Iy(P(y))]
 #it is the name of the python variable that contains the identity of
 #the last updated element
-#define it: it
+define it: Lx[it(x)]
 
 exercise tree
 title TITLE
-directions TITLE
+directions DIRECTIONS
 
 [.VP [.V draw][.DP[.D a][.AP[.A red][.NP square]]]]
+
+#Lambda Calculator Output for the sentence above: 
+#λz.[draw(z) ∧ red(z) ∧ square(z)]
