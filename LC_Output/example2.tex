@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[a3paper,left=0in,landscape]{geometry}
+\usepackage{qtree}
+\def\qtreepadding{3pt}
+\begin{document}
+
+\Tree
+[.{VP\\
+$et$
+\\
+$\lambda z.[\mbox{draw}(z) \land \mbox{circle}(z)]$
+}  
+[.{V\\
+$et$
+\\
+$\lambda x.[\mbox{draw}(x)]$
+}  
+{draw\\$et$\\
+$\lambda x.[\mbox{draw}(x)]$
+ } ]  
+[.{DP\\
+$et$
+\\
+$\lambda x.[\mbox{circle}(x)]$
+}  
+[.{D\\
+$\langle et,et\rangle $
+\\
+$\lambda P.P$
+}  
+{a\\$\langle et,et\rangle $\\
+$\lambda P.P$
+ } ]  
+[.{NP\\
+$et$
+\\
+$\lambda x.[\mbox{circle}(x)]$
+}  
+{circle\\$et$\\
+$\lambda x.[\mbox{circle}(x)]$
+ } ]  ]  ] 
+
+\end{document}
+
