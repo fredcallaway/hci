@@ -34,12 +34,23 @@ if __name__ == "__main__":
     			draw(w,'','red','circle')
 
 
+
+# ON HOLD until we figure out how we're getting LC output
+# for now, assume you have output like this:
+# 
+#
 def parse_cmd(cmd):
 	"""translates user input into (logical notation)"""
-	bash("sh ../bitpar/parse '"+cmd+"'") #ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
+	# bash("sh ../bitpar/parse '"+cmd+"'") #ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
 	# send to lambda calculator
-	# translate output into functions
-	# call functions
+	# 
+	# NOTE: we don't know how/if we will get LC output; for now, we will
+	# assume that this function takes as input something like this:
+	# λz.[draw(z) ∧ red(z) ∧ square(z)]
+	#
+	# TODO:
+	# 	- translate output into functions
+	# 	- call functions
 
 
 
