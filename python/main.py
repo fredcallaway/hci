@@ -1,83 +1,96 @@
-from gui import *
+# from gui import *
 from bash import bash
 
-circles = []
-squares = []
-def draw(w, size, color, shape, loc=Point(250,250)):
-	# TODO: rewrite with tkinter syntax
-	width = { #this is like a switch statement
-	  'small': 50
-	  'big': 200
-	}.get(size, 100) #100 is default
-	if shape is 'circle':
-		s = Circle(loc, width/2)
-		circles.append(s)
-	if shape is 'square':
-		s = Rectangle(Point(loc.x-width/2,loc.y-width/2),
-					  Point(loc.y+width/2,loc.y+width/2))
-		squares.append(s)
-	s.setColor(color)
-	s.draw(w)
+def AttributeList():
+    #for testing purposes
+    return {'shape':None,'color':None}
 
-if __name__ == "__main__":
-	# TODO: rewrite with tkinter syntax
-    w = GraphWin("Example", 500, 500)
-    e = Entry(Point(250,490),50) #input text box
-    e.draw(w)
-    while True: #main loop
-    	if w.checkKey() == 'Return':
-    		cmd = e.getText() #get input
-    		print cmd
-    		e.setText('')
-    		if cmd == 'draw a red circle':
-    			print 'drawing'
-    			draw(w,'','red','circle')
+def parseInput(input):
+    """translates user input into (logical notation)"""
+    # parse=bash("sh ../bitpar/parse '"+input+"'") # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
+    cmd="draw(Gy[red(y) & square(y)])" # send to lambda calculator
+    parse(cmd)
 
+# Gy[red(y) & square(y)]
+#   - create attribute list, y
+#   - go thrrough bracketed list and apply functions to y
+# Gy[square(y) ] & nextTo(y,(ix[blue(x)])&square(x)]]
+def parse(string):
+    print "parse("+string+")"
+    global local_vars # a dictionary that contains mappings from variables to attribute lists
+    if string in local_vars: # e.g. 'y'
+        return string 
+    elif string[0]=='G':
+        return G(string[1],string[3:len(string)-1])
+    elif string[0]=='I':
+        pass
+    else:
+        #interpret the argument as a string to be parsed
+        fun = string.split( '(' , 1)[0] # e.g. 'draw' or 'red'
+        arg = parse(string.split( '(' , 1)[1][:-1])  # e.g. 'Gy[(red(y) & square(y)]' or 'y'
+        exec(fun+'(arg)')
 
-
-# ON HOLD until we figure out how we're getting LC output
-# for now, assume you have output like this:
-# 
-#
-def parse_cmd(input):
-	"""translates user input into (logical notation)"""
-	parse=bash("sh ../bitpar/parse '"+input+"'") # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
-	cmd="draw(Gy[(red(y) ∧ square(y)])" # send to lambda calculator
-    
-
-    # Gy[(red(y) ∧ square(y)]
-    #   - create attribute list, y
-    #   - go thrrough bracketed list and apply functions to y
-    # Gy[square(y) ] ∧ nextTo(y,(ix[blue(x)])∧square(x)]]
-        
-
-def create(attr):
-    pass
-
-def change(shape, attr):
-    pass
-
-## PARSE COMMANDS
-
+            
+#draw(Gy[(red(y) & square(y)])
 def draw(attr):
-    
-    #draws a shape with attributes in attr
-    #adds shape to list of shapes
-    pass
+    print 'Gui.create('+`local_vars[attr]`+')'
+def make1(attr):
+   print 'Gui.create()'
 
 def make2(shape, attr):
-    #updates shape with attributes in attr
+    #updates shape with non-null attributes in attr
     pass
 
-def G(attr):
-    #creates a shape (not draw it)
+def G(var,string):
+    global local_vars
+    #create a new local variable
+    local_vars[var]=AttributeList()
+    #apply functions to new local variable, updating its attibute list
+    for substring in string.split(" & "):
+        parse(substring)
+    return var
+def I(string):
     pass
 
-def I(attr):
-    pass
+#COLORS:
+def red(var):
+    global local_vars
+    local_vars[var]['color']='red'
+def orange(var):
+    global local_vars
+    local_vars[var]['color']='orange'
+def yellow(var):
+    global local_vars
+    local_vars[var]['color']='yellow'
+def green(var):
+    global local_vars
+    local_vars[var]['color']='green'
+def blue(var):
+    global local_vars
+    local_vars[var]['color']='blue'
+def purple(var):
+    global local_vars
+    local_vars[var]['color']='purple'
+def white(var):
+    global local_vars
+    local_vars[var]['color']='white'
+def black(var):
+    global local_vars
+    local_vars[var]['color']='black'
 
-# attr: property list, may contain nulls
-# shape: existing object, contains a full attr (no null values)
-# 
+#SHAPES:
+def circle(var):
+    global local_vars
+    local_vars[var]['shape']='circle'
+def square(var):
+    global local_vars
+    local_vars[var]['shape']='square'
+def triangle(var):
+    global local_vars
+    local_vars[var]['shape']='triangle'
 
 
+
+if __name__ == "__main__":
+    local_vars={}
+    parseInput("none")
