@@ -39,23 +39,45 @@ if __name__ == "__main__":
 # for now, assume you have output like this:
 # 
 #
-def parse_cmd(cmd):
+def parse_cmd(input):
 	"""translates user input into (logical notation)"""
-	# bash("sh ../bitpar/parse '"+cmd+"'") #ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
-	# send to lambda calculator
-	# 
-	# NOTE: we don't know how/if we will get LC output; for now, we will
-	# assume that this function takes as input something like this:
-	# λz.[draw(z) ∧ red(z) ∧ square(z)]
-	#
-	# TODO:
-	# 	- translate output into functions
-	# 	- call functions
+	parse=bash("sh ../bitpar/parse '"+input+"'") # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
+	cmd="draw(Gy[(red(y) ∧ square(y)])" # send to lambda calculator
+    
 
+    # Gy[(red(y) ∧ square(y)]
+    #   - create attribute list, y
+    #   - go thrrough bracketed list and apply functions to y
+    # Gy[square(y) ] ∧ nextTo(y,(ix[blue(x)])∧square(x)]]
+        
 
+def create(attr):
+    pass
 
+def change(shape, attr):
+    pass
 
+## PARSE COMMANDS
 
+def draw(attr):
+    
+    #draws a shape with attributes in attr
+    #adds shape to list of shapes
+    pass
 
+def make2(shape, attr):
+    #updates shape with attributes in attr
+    pass
+
+def G(attr):
+    #creates a shape (not draw it)
+    pass
+
+def I(attr):
+    pass
+
+# attr: property list, may contain nulls
+# shape: existing object, contains a full attr (no null values)
+# 
 
 
