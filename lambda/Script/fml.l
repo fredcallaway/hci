@@ -1,0 +1,25 @@
+WORD         [^ 	()]
+WHITE         [ 	]
+VAR         [A-Za-z]
+SPACE         [ ]
+COM     [,]
+PER     [.]
+RPAREN	[)]
+HYPHEN	[-]
+DOL	[$]
+%%
+\$\\mbox\{result\}\(	{printf("true ");}
+\\land          {printf("&");}
+\\lnot          {printf("~");}
+\\forall{WHITE}+{VAR}	{printf("%s.", yytext + 4);}
+\\exists{WHITE}+{VAR}	{printf("ex %s.", yytext + 8);}
+\[	{printf("(");}
+\]	{printf(")");}
+\\rightarrow          {printf("->");}
+\\mbox\{	;
+\}	;
+\)\$	{printf(".\n");};
+%%
+
+
+

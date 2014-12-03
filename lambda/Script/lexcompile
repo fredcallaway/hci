@@ -1,0 +1,4 @@
+flex $1.l
+gcc lex.yy.c -ll 
+mv a.out $1
+chmod +x $1
