@@ -1,14 +1,12 @@
-Lambda
+HCI
 
-#constants of type e : it
-#constants of type <e,e> : C 
-#constants of type <e,t> : S
+constants of type e : it them
 variables of type e : a-o r-z
-variables of type <e,t> : P-Q
 variables of type t : p q
+variables of type <e,t> : P Q
 variables of type <e,et> : R
-variables of type <et,t> : T
-variables of type <<e,t>,e> : A
+#variables of type <et,t> : T
+#variables of type <et,e> : A
 
 multiple letter identifiers
 
@@ -17,15 +15,18 @@ use rule non-branching nodes
 use rule predicate modification
 use rule lambda abstraction
 
-#screen
+#Screen
+
 define screen: Lx[screen(x)]
 
-#shapes
+#Shapes
+
 define circle: Lx[circle(x)]
 define square: Lx[square(x)]
 define triangle: Lx[triangle(x)]
 
-#colors
+#Colors
+
 define red: Lx[red(x)]
 define orange: Lx[orange(x)]
 define yellow: Lx[yellow(x)]
@@ -35,23 +36,52 @@ define purple: Lx[purple(x)]
 define white: Lx[white(x)]
 define black: Lx[black(x)]
 
-#actions
-#replace 'draw' below with name of python command?
+#Actions
+
 define draw: Lx[draw(x)]
+
 #make1 = draw; it creates a new object and puts it on the screen
 define make1: Lx[draw(x)]
-#make2 modifies the parameters of an existing object on the screen
-#define make2: LPLx[P(x)]
 
-#function words
-define a: LP.P
-define the: LP[Iy(P(y))]
-#it is the name of the python variable that contains the identity of
-#the last updated element
-#define it: it
+#make2 modifies the parameters of an existing object on the screen
+define make2: LxLP[P(x)]
+
+#delete moves an item from the on-screen list to the off-screen list
+define delete: LPLx[P(x) & hide(x)]
+
+#Function Words
+
+define a: LP[Gx(P(x))]
+define the: LP[Ix(P(x))]
+
+#'it' is the Python variable that contains the identity of the last updated element
+define it: it
+define them: them
+
+#one1: for use with make1
+#Ex: 'make1 a blue one' (of whatever shape was most recently made)
+
+#one1 is equal to the value of it.shape in Python 
+#it.shape is the shape parameter of the object currently stored in 'it'
+#it.shape(x) should operate like square(x) when it.shape = square
+#it.shape is represented here as it-shape due to LC syntax restrictions
+define one1: Lx[it-shape(x)]
+
+#one2, ones: for use with make2
+#Ex: 'make2 the blue one/ones green'
+
+#Current working definition for one2
+define one2: LP.P
+#Actual set theoretic definition of one2 and ones; not currently playing nice with LC.
+#define one2, ones: LP{x | P(x)}
 
 exercise tree
 title TITLE
-directions TITLE
+directions DIRECTIONS
 
-[.VP [.V draw][.DP[.D a][.AP[.A red][.NP square]]]]
+#Test Sentences
+
+#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
+#[.VP [.V' [.V make2] [.NP it]] [.A green]]
+#[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
+[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
