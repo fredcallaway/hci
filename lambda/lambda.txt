@@ -45,6 +45,10 @@ define make1: Lx[draw(x)]
 
 #make2 modifies the parameters of an existing object on the screen
 define make2: LxLP[P(x)]
+#FRED: this results in "make it green" → green(it) so green() can now be
+#      either a predicate modifier or a function command; is this a problem?
+#      it will be fine in python if it's fine from a theory perspective
+#      another possibility would be: LxLP[make2(x,P)]
 
 #delete moves an item from the on-screen list to the off-screen list
 define delete: LPLx[P(x) & hide(x)]
@@ -66,6 +70,8 @@ define them: them
 #it.shape(x) should operate like square(x) when it.shape = square
 #it.shape is represented here as it-shape due to LC syntax restrictions
 define one1: Lx[it-shape(x)]
+#FRED: i suggest Lx[one1(x)] to fit with our pattern of defining meaning in python, not 
+#      lambda; but this is exactly what we want one1() to mean.
 
 #one2, ones: for use with make2
 #Ex: 'make2 the blue one/ones green'
@@ -82,6 +88,6 @@ directions DIRECTIONS
 #Test Sentences
 
 #[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
-#[.VP [.V' [.V make2] [.NP it]] [.A green]]
+[.VP [.V' [.V make2] [.NP it]] [.A green]]
 #[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
-[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
+#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
