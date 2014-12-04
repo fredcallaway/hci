@@ -66,7 +66,6 @@ def gamma(var,string):
         parse(substring)
     return var
 
-# NIKITA
 def iota(var, string):
     # goes through existing shapes and finds ones that matches attributes in string
     # if there is one shape that matches, assign var to that shape

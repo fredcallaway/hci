@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 from Tkinter import *
-from bash import bash
 from window_management import MainFrame
 from parsing import runMainParser
 
@@ -25,22 +24,13 @@ def cmdLineCallback(event):
 	cmd = main_frame.entry.get()
 	main_frame.entry.delete(0,END)
 	# command is now stored as string cmd
-	if(len(str)==0):
+	if(len(cmd)==0):
 		return
 	else:
 		# save it to the text box
 		main_frame.text.insert(END,'> '+cmd+'\n','usr')
 		cmd_history.append(cmd)
-		"""
-		parse=bash("sh ../bitpar/parse '"+cmd+"'") 
-		# ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
-	    bash("java -jar ../lambda/lambda-auto.jar ../lambda/input.txt > ../lambda/input.tex")
-	    fml=bash("make -C ../lambda input.fml")
-	    print fml
-	    lambdaCalc_output=`fml`.split('true ')[1]
-	    lambda_output_history.append(lambdaCalc_output)
-	    runMainParser(lambdaCalc_output) 
-	    """
+		runMainParser(cmd)
 
 
 

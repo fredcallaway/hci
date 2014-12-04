@@ -26,21 +26,6 @@ class Attributes(dict):
         self.names=[]
 
 
-#constants for specifying attributes that are absolute, ie enumerated
-attrTypes = ('shape','size','positioning')
-attrNames = (
-    ('oval','circle','rectangle','square','triangle'),
-    ('tall','short','wide','narrow','large','small'),
-    ('top','bottom','left','right')
-)
-#note that color is a catch-all type for names that don't match the above lists
-
-#constants for changing, relative absolutes
-changeTypes = (relMove, relSize)
-changeNames = (
-    ('up','down','left','right'),
-    ('taller','shorter','wider','narrower','larger','smaller')
-)
 
 def relMove(attr,command):
     [x,y]=attr.center
@@ -79,6 +64,22 @@ def relSize(attr,command):
 
 def addName(attr,name):
     attr['names'].append(name)
+
+#constants for specifying attributes that are absolute, ie enumerated
+attrTypes = ('shape','size','positioning')
+attrNames = (
+    ('oval','circle','rectangle','square','triangle'),
+    ('tall','short','wide','narrow','large','small'),
+    ('top','bottom','left','right')
+)
+#note that color is a catch-all type for names that don't match the above lists
+
+#constants for changing, relative absolutes
+changeTypes = (relMove, relSize)
+changeNames = (
+    ('up','down','left','right'),
+    ('taller','shorter','wider','narrower','larger','smaller')
+)
 
 #use this when updating Attributes
 #ie make2
@@ -205,4 +206,4 @@ def undo():
     global it
     global database
     if not it is None:
-        
+        pass
