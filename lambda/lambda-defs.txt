@@ -81,10 +81,13 @@ exercise tree
 title TITLE
 directions DIRECTIONS
 
+#dummy function for plop
+define result: Lp.result(p)
+
 #Test Sentences
 
-[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
+#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
 #[.VP [.V' [.V make2] [.NP it]] [.A green]]
 #[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
-[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
+#[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
 #[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]

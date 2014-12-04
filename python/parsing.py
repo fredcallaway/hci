@@ -9,6 +9,11 @@ import graphics
 from bash import bash
 import re
 local_vars = {}
+class ParseError(Exception):
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
 
 def runMainParser(cmd):
     global local_vars
@@ -19,17 +24,26 @@ def runMainParser(cmd):
             - these variables are tied to an attribute list
             - a variable can represent an existing shape or a hypothetical shape
     """
+    # bitpar
     cmd=clean(cmd)
     cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
-    # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
     cmd=label(cmd)
     print cmd
+
+    # update input.txt
+    bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt")
+    bash("echo '"+cmd+"' >> ../lambda/input.txt")
+
+    # lambda calculator & plop
     bash("java -jar ../lambda/lambda-auto.jar ../lambda/input.txt > ../lambda/input.tex")
-    fml=bash("make -C ../lambda input.fml")
-    lambdaCalc_output=`fml`.split('true ')[1]
-    #lambda_output_history.append(lambdaCalc_output)
-    #out of scope. how do i fix this?
-    parse(lambdaCalc_output) 
+    bash("make -C ../lambda input.fml")
+    fml=`bash('cat ../lambda/input.fml')`
+    if fml == '': raise ParseError('cannot be interpreted by lambda calculator')
+
+    lambdaCalc_output=fml.split('true ')[1]
+    #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
+    print lambdaCalc_output
+    parse(lambdaCalc_output)
 
 def clean(cmd):
     cmd = re.sub('next to', 'next-to', cmd)
@@ -37,17 +51,20 @@ def clean(cmd):
     return cmd
 
 def label(cmd):
-    cmd = cmd.replace('make][.NP', 'make1][.NP') # make-1 for creation
-    cmd = cmd.replace('make][.SC', 'make2][.SC') # make-2 for alteration
+    # see lambda-defs.txt for explanation of labels
+    cmd = cmd.replace('make][.NP', 'make1][.NP')
+    cmd = cmd.replace('make][.SC', 'make2][.SC')
     cmd = re.sub('(draw.*)one','\\1one1',cmd)
     cmd = re.sub('(make1.*)one','\\1one1',cmd)
     cmd = re.sub('(make2.*)one','\\1one2',cmd)
+    cmd = '[result ' + cmd + ']' #dummy function for plop
     return cmd
 
 
 def parse(string):
     global local_vars
     print "parse("+string+")"
+    # variables
     if string in local_vars: # e.g. 'y'
         return string 
     # if string in names:
@@ -60,7 +77,8 @@ def parse(string):
         # treating iota as gamma for now
         return gamma(string[6],string[8:len(string)-2])
 
-    else: # function application
+    # function application
+    else:
         fun = string.split( '(' , 1)[0] # e.g. 'draw' or 'red'
         arg = parse(string.split( '(' , 1)[1][:-1])  # e.g. 'Gy[(red(y) & square(y)]' or 'y'
         exec(fun+'(arg)')
@@ -137,7 +155,6 @@ def small(var):
     global local_vars
     graphics.setAttributes(local_vars[var],'small')
 
-
 #SHAPES:
 def circle(var):
     global local_vars
@@ -153,4 +170,5 @@ def triangle(var):
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
-    runMainParser("make the red square")
+    runMainParser("make a red triangle")
+    # runMainParser("put the square next to the circle")
