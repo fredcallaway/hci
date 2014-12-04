@@ -7,9 +7,11 @@
 
 import graphics
 from bash import bash
-
+local_vars = {}
 
 def runMainParser(cmd):
+    global local_vars
+    local_vars={}
     """translates user input into (logical notation)
         - parse works recursively, applying functions and operators
         - variables in logical form are stored in local_vars
@@ -25,8 +27,8 @@ def runMainParser(cmd):
     parse(lambdaCalc_output) 
 
 def parse(string):
+    global local_vars
     print "parse("+string+")"
-    global local_vars # a dictionary that contains mappings from variables to attribute lists
     if string in local_vars: # e.g. 'y'
         return string 
     # if string in names:
@@ -45,7 +47,8 @@ def parse(string):
         exec(fun+'(arg)')
 
 def draw(attr):
-    print 'draw'
+    print 'draw:'
+    print local_vars[attr]
 def make1(attr):
    print 'Gui.create()'
 
@@ -57,7 +60,7 @@ def gamma(var,string):
     """returns variable associated with attribute list from attributes in string"""
     global local_vars
     #create a new local variable
-    local_vars[var]=Attributes()
+    local_vars[var]=graphics.Attributes()
     #apply functions to new local variable, updating its attibute list
     for substring in string.split(" & "):
         parse(substring)
@@ -72,41 +75,62 @@ def iota(var, string):
 #COLORS:
 def red(var):
     global local_vars
-    setAttributes(local_vars[var],'red')
+    graphics.setAttributes(local_vars[var],'red')
 def orange(var):
     global local_vars
-    setAttributes(local_vars[var],'orange')
+    graphics.setAttributes(local_vars[var],'orange')
 def yellow(var):
     global local_vars
-    setAttributes(local_vars[var],'yellow')
+    graphics.setAttributes(local_vars[var],'yellow')
 def green(var):
     global local_vars
-    setAttributes(local_vars[var],'green')
+    graphics.setAttributes(local_vars[var],'green')
 def blue(var):
     global local_vars
-    setAttributes(local_vars[var],'blue')
+    graphics.setAttributes(local_vars[var],'blue')
 def purple(var):
     global local_vars
-    setAttributes(local_vars[var],'purple')
+    graphics.setAttributes(local_vars[var],'purple')
 def white(var):
     global local_vars
-    setAttributes(local_vars[var],'white')
+    graphics.setAttributes(local_vars[var],'white')
 def black(var):
     global local_vars
-    setAttributes(local_vars[var],'black')
+    graphics.setAttributes(local_vars[var],'black')
+
+#SIZES:
+def tall(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'tall')
+def short(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'short')
+def wide(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'wide')
+def narrow(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'narrow')
+def large(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'large')
+def small(var):
+    global local_vars
+    graphics.setAttributes(local_vars[var],'small')
+
 
 #SHAPES:
 def circle(var):
     global local_vars
-    setAttributes(local_vars[var],'circle')
+    graphics.setAttributes(local_vars[var],'circle')
 def square(var):
     global local_vars
-    setAttributes(local_vars[var],'square')
+    graphics.setAttributes(local_vars[var],'square')
 def triangle(var):
     global local_vars
-    setAttributes(local_vars[var],'triangle')
+    graphics.setAttributes(local_vars[var],'triangle')
 
 
 
 if __name__ == "__main__":
-    parse("draw(\gamma y(red(y) & square(y))).")
+    parse("draw(\gamma y(large(y) & square(y))).")
