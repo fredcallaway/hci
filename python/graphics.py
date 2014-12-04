@@ -192,7 +192,7 @@ def drawAttributes(attr):
     swh=canvasWidth()/2
     [cx,cy]=attr.center
     [w,h]=attr.span
-    loc=[(swh+cx)-w/2,sh-((shh+cy-w/2),w,h]
+    loc=[(swh+cx)-w/2,sh-(shh+cy-w/2),w,h]
     shape=attr['shape']
     color=attr['color']
     if shape is 'oval':
@@ -219,7 +219,7 @@ def drawAttributes(attr):
     return 
 
 def updateAttributes(attr):
-
+    pass
 """
 def undo():
     global it

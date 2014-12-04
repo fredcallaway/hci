@@ -7,6 +7,7 @@
 
 import graphics
 from bash import bash
+import re
 local_vars = {}
 
 def runMainParser(cmd):
@@ -18,13 +19,31 @@ def runMainParser(cmd):
             - these variables are tied to an attribute list
             - a variable can represent an existing shape or a hypothetical shape
     """
-    parse=bash("sh ../bitpar/parse '"+cmd+"'") 
+    cmd=clean(cmd)
+    cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
     # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
+    cmd=label(cmd)
+    print cmd
     bash("java -jar ../lambda/lambda-auto.jar ../lambda/input.txt > ../lambda/input.tex")
     fml=bash("make -C ../lambda input.fml")
     lambdaCalc_output=`fml`.split('true ')[1]
-    lambda_output_history.append(lambdaCalc_output)
+    #lambda_output_history.append(lambdaCalc_output)
+    #out of scope. how do i fix this?
     parse(lambdaCalc_output) 
+
+def clean(cmd):
+    cmd = re.sub('next to', 'next-to', cmd)
+    cmd = re.sub('on top of', 'on-top-of', cmd)
+    return cmd
+
+def label(cmd):
+    cmd = cmd.replace('make][.NP', 'make1][.NP') # make-1 for creation
+    cmd = cmd.replace('make][.SC', 'make2][.SC') # make-2 for alteration
+    cmd = re.sub('(draw.*)one','\\1one1',cmd)
+    cmd = re.sub('(make1.*)one','\\1one1',cmd)
+    cmd = re.sub('(make2.*)one','\\1one2',cmd)
+    return cmd
+
 
 def parse(string):
     global local_vars
@@ -39,7 +58,7 @@ def parse(string):
         return gamma(string[7],string[9:len(string)-2])
     elif string.find('\iota') == 0:
         # treating iota as gamma for now
-        return gamma(string[7],string[9:len(string)-2])
+        return gamma(string[6],string[8:len(string)-2])
 
     else: # function application
         fun = string.split( '(' , 1)[0] # e.g. 'draw' or 'red'
@@ -133,4 +152,5 @@ def triangle(var):
 
 
 if __name__ == "__main__":
-    parse("draw(\gamma y(large(y) & square(y))).")
+    # parse("draw(\gamma y(large(y) & square(y))).")
+    runMainParser("make the red square")
