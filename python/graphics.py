@@ -25,6 +25,10 @@ class Attributes(dict):
         self.idnum=None # tells us if the object has been drawn
         self.names=[]
 
+x=Attributes()
+x['color']='green'
+x['color']
+x.center=[1,1,1,1]
 
 
 def relMove(attr,command):
@@ -131,28 +135,38 @@ class HistoryEntry:
         return self.get()
     def get():
         return self.history[self.current]
+
 class HistoryMap:
     def __init__(self):
         self.mappings={}
+        self.newestID = -1
+    def getNewID():
+        self.newestID += 1
+        return self.newestID
     def add(self,attr):
-        entry = self.mappings.get(attr.idnum,None)
-        if entry == None:
-            self.mappings[attr.idnum]=HistoryEntry(attr)
+        #entry = self.mappings.get(attr.idnum,None)
+        #if entry == None:
+        self.mappings[getNewID()]=HistoryEntry(attr)
+        #else:
+        #    entry.update(attr)
+        return self.newestID
+    def update(self,idnum):
+        if idnum<=newestID:
+            self.mappings[idnum]
         else:
-            entry.update(attr)
-
-
+            return
     #below method is used to compare Attributes 
     #return a list of all matches
     #note that None matches all
     #and locations and sizes are not compared
     #   (rely on wide, narrow descriptors instead)
+    #return list of id,Attributes pairs: [(id,Attributes)]
     def findMatches(self,attr):
         aVals = attr.values()
         matches=[]
-        for histEntry in self.mappings.itervalues():
+        for (idnum,histEntry) in self.mappings.iteritems():
             if all(map(lambda x: x in aVals, entry.get().values())):
-                matches.append(histEntry.get())
+                matches.append((idnum,histEntry.get()))
         return matches
 
 
@@ -174,9 +188,11 @@ def reprocessAttributes(attr):
 
 def drawAttributes(attr):
     sh=canvasHeight()
+    shh=sh/2
+    swh=canvasWidth()/2
     [cx,cy]=attr.center
     [w,h]=attr.span
-    loc=[cx-w/2,sh-(cy-w/2),w,h]
+    loc=[(swh+cx)-w/2,sh-((shh+cy-w/2),w,h]
     shape=attr['shape']
     color=attr['color']
     if shape is 'oval':
@@ -197,13 +213,17 @@ def drawAttributes(attr):
     #this allows us to add it to the database
     global it
     global datbase
-    it = attr
-    database.add(it)
+    it=database.add(attr)
     #update our canvas
     canvas.update()
+    return 
 
+def updateAttributes(attr):
+
+"""
 def undo():
     global it
     global database
     if not it is None:
         pass
+"""
