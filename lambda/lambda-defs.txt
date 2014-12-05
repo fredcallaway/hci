@@ -1,12 +1,12 @@
 HCI
 
 constants of type e : it them
-constant of type <et,e> : G
+constants of type t : clear that
+constants of type <et> : iterate
 variables of type e : a-o r-z
 variables of type t : p q
-variables of type <e,t> : P Q
+variables of type <et> : P Q
 variables of type <e,et> : R
-#variables of type <et,t> : T
 
 multiple letter identifiers
 
@@ -46,8 +46,19 @@ define make1: Lx[draw(x)]
 #make2 modifies the parameters of an existing object on the screen
 define make2: LxLP[P(x)]
 
-#delete moves an item from the on-screen list to the off-screen list
-define delete: LPLx[P(x) & hide(x)]
+#delete/remove/erase all move an item from the on-screen list to the off-screen list
+define delete: Lx[hide(x)]
+define remove: Lx[hide(x)]
+define erase: Lx[hide(x)]
+
+#clear removes all items from the on-screen and off-screen lists and resets the program to its starting state
+define clear: clear
+
+#'undo' reverts the world to the state it was in prior to the instruction stored in 'that'
+define undo: Lp[undo(p)]
+
+#'copy' runs the instruction stored in 'that' again; 'copy' should not update 'that'
+define copy: Lp[copy(p)]
 
 #Function Words
 
@@ -56,26 +67,44 @@ define the: LP[Ix(P(x))]
 
 #'it' is the Python variable that contains the identity of the last updated element
 define it: it
-define that: it
+
+#'them' is the Python variable that contains the identity of the most recently updated elements
 define them: them
+
+#that: for use with undo and copy
+#Ex: 'undo that'
+define that: that
+
+#'another' is semantically equivalent in our world to 'a'
+#Ex: 'make1 another one1'
+define another: LP[Gx(P(x))]
 
 #one1: for use with make1
 #Ex: 'make1 a blue one' (of whatever shape was most recently made)
-
 #one1 is equal to the value of it.shape in Python 
 #it.shape is the shape parameter of the object currently stored in 'it'
 #it.shape(x) should operate like square(x) when it.shape = square
 #it.shape is represented here as it-shape due to LC syntax restrictions
+#Version of one1 that only preserves shape info in new object
+#Draw a big blue square. Make a red one. => A red square. (Not big.)
 define one1: Lx[it-shape(x)]
+#Version of one1 that preserves all unchanged parameters in new object
+#Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
+define one1: Lx[it-parameters(x)]
 
-#one2, ones: for use with make2
-#Ex: 'make2 the blue one/ones green'
-
-#Current working definition for one2
+#one2: for use with make2
+#Ex: 'make2 the blue one green'
 define one2: LP.P
-#Actual set theoretic definition of one2 and ones; not currently playing nice with LC.
-#Set theory not going to work; need to define function that iterates through objects on screen
-#define one2, ones: LP{x | P(x)}
+
+#ones: for use with make2
+#Ex: 'make2 the blue ones green'
+#ones iterates over the predicate in P to determine all of the entities in the on-screen list that satisfy P
+define ones: Lx[iterate(x)]
+
+#An 'and' for all occasions
+define and-e: LxLy[x & y]
+define and-t: LpLq[p & q]
+define and-et: LPLQLx[P(x) & Q(x)]
 
 exercise tree
 title TITLE
@@ -83,8 +112,12 @@ directions DIRECTIONS
 
 #Test Sentences
 
-[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
+#[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
+#[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
 #[.VP [.V' [.V make2] [.NP it]] [.A green]]
-#[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
-[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
+#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
 #[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
+#[.VP [.V delete] [.DP [.D the] [.N square]]]
+#[.VP [.V undo] [.N that]]
+#[.VP [.V copy] [.N that]]
+[.VP [.V make1] [.NP [.A another] [.N one1]]]
