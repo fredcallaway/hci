@@ -14,7 +14,7 @@ instructions3.pdf: instructions3.txt
 	ps2pdf instructions3.ps
 
 %.fml: %.tex Script/fml
-	cat $*.tex | egrep 'result' | head -1 | Script/fml
+	cat $*.tex | egrep 'result' | head -1 | Script/fml > $*.fml
 
 %.plw:
 	awk -f Script/word.awk -v WORD=$* > $*.plw

@@ -5,7 +5,6 @@ from window_management import MainFrame
 from copy import deepcopy
 
 #reference to the graphics canvas
-
 canvas = None
 def canvasHeight():
     return canvas.winfo_screenheight()
@@ -17,13 +16,24 @@ def standardSizes():
     return [100.0,100.0]
 
 class Attributes(dict):
+    # FRED: i realized that this name is very unintuitive. i think we should
+    #       change it to simply Shape. that's what this object really is
     def __init__(self,*args,**kw):
         super(Attributes,self).__init__(*args,**kw)
         #define special fields
         self.center=[0.0,0.0]
         self.span=standardSizes()
         self.idnum=None # tells us if the object has been drawn
+
         self.names=[]
+        #FRED: - an object should only be allowed to have one name, shouldn't it?
+        #      - we should also prevent the user from assigning one name to two objects
+        #      - rather than viewing names as an attribute of an Attributes object, we
+        #        could make names a dict from names to Attributes object.
+        #      - we should think of ids in the same way, but use a list; and ids are
+        #        mandatory. this is what database.mappings is correct?
+        #      - what if we just kept a list of shapes as they are created, then the
+        #        idnum is simply the index in that list. a dictionary is just cruft
 
 
 def relMove(attr,command):
@@ -104,8 +114,6 @@ def setAttributes(attr, command):
 
 
 it = None
-#TODO!! Think carefully about history. Need a good datastructure, linked 
-#somehow to recreate previous images
 
 class HistoryEntry:
     def __init__(self,attr):
@@ -219,7 +227,6 @@ def createDrawnAttributes(attr):
     global datbase
     it=database.add(attr)
     return it
-
 
 #note that these dont call update on canvas
 def hide(attrId):
