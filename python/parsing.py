@@ -9,6 +9,8 @@ import graphics
 from bash import bash
 import re
 local_vars = {}
+shapes = []
+named_shapes = {}
 class ParseError(Exception):
     def __init__(self, value):
         self.value = value
@@ -66,11 +68,15 @@ def parse(string):
     print "parse("+string+")"
     # variables
     if string in local_vars: # e.g. 'y'
-        return string 
-    # if string in names:
-        # return string
+        return local_vars[string]
+        print local_vars[string]
+    # elif string in named_shapes:
+        # return named_shapes[string]
+    # elif string is 'it':
+        # return graphics.it
 
     # operators
+    # this is essentially binding
     elif string.find('\gamma') == 0:
         return gamma(string[7],string[9:len(string)-2])
     elif string.find('\iota') == 0:
@@ -83,92 +89,87 @@ def parse(string):
         arg = parse(string.split( '(' , 1)[1][:-1])  # e.g. 'Gy[(red(y) & square(y)]' or 'y'
         exec(fun+'(arg)')
 
-def draw(attr):
-    print 'draw:'
-    print local_vars[attr]
-def make1(attr):
-   print 'Gui.create()'
+def draw(shape):
+    """creates a new shape"""
+    print 'drawing: '+shape
+    # graphics.drawAttributes(shape)
 
-def make2(shape, string):
-    """updates shape with non-null attributes in attr"""
+def one1(shape):
+    """fills unspecified attributes of var with attributes of graphics.it"""
+    for attribute in it():
+            graphics.updateAttributes(shape, graphics.it[attribute])
+
+def one2(shape):
+    """returns: most recently mentioned shape with properties in shape"""
     pass
 
 def gamma(var,string):
-    """returns variable associated with attribute list from attributes in string"""
+    """returns: a new shape with attributes described in string"""
     global local_vars
     #create a new local variable
+    #local variables are keys for local_vars
     local_vars[var]=graphics.Attributes()
     #apply functions to new local variable, updating its attibute list
     for substring in string.split(" & "):
         parse(substring)
-    return var
+    return local_vars[var]
 
 def iota(var, string):
-    """goes through existing shapes and finds ones that matches attributes in string
-    if there is one shape that matches, assign var to that shape
-    else, throw error: "iota ambiguity"""
-    pass
+    """returns: the unique shape matching attributes in string
+       throw error: "iota ambiguity" if there is not a unique shape"""
+    global local_vars
+    local_vars[var]=graphics.Attributes()
+    for substring in string.split(" & "):
+        parse(substring)
+    matches = graphics.findMatches(local_vars[var])
+    if len(matches) != 1: raise ParseError('iota ambiguity')
+    idnum = matches[0][0]
+    return shapes[idnum]
 
 #COLORS:
-def red(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'red')
-def orange(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'orange')
-def yellow(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'yellow')
-def green(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'green')
-def blue(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'blue')
-def purple(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'purple')
-def white(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'white')
-def black(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'black')
+def red(shape):
+    graphics.updateAttributes(shape, 'red')
+def orange(shape):
+    graphics.updateAttributes(shape, 'orange')
+def yellow(shape):
+    graphics.updateAttributes(shape, 'yellow')
+def green(shape):
+    graphics.updateAttributes(shape, 'green')
+def blue(shape):
+    graphics.updateAttributes(shape, 'blue')
+def purple(shape):
+    graphics.updateAttributes(shape, 'purple')
+def white(shape):
+    graphics.updateAttributes(shape, 'white')
+def black(shape):
+    graphics.updateAttributes(shape, 'black')
 
 #SIZES:
-def tall(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'tall')
-def short(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'short')
-def wide(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'wide')
-def narrow(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'narrow')
-def large(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'large')
-def small(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'small')
+def tall(shape):
+    graphics.updateAttributes(shape, 'tall')
+def short(shape):
+    graphics.updateAttributes(shape, 'short')
+def wide(shape):
+    graphics.updateAttributes(shape, 'wide')
+def narrow(shape):
+    graphics.updateAttributes(shape, 'narrow')
+def large(shape):
+    graphics.updateAttributes(shape, 'large')
+def small(shape):
+    graphics.updateAttributes(shape, 'small')
 
 #SHAPES:
-def circle(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'circle')
-def square(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'square')
-def triangle(var):
-    global local_vars
-    graphics.setAttributes(local_vars[var],'triangle')
-
+def circle(shape):
+    graphics.updateAttributes(shape, 'circle')
+def square(shape):
+    graphics.updateAttributes(shape, 'square')
+def triangle(shape):
+    graphics.updateAttributes(shape, 'triangle')
+    
 
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
-    runMainParser("make a red triangle")
+    # runMainParser("make a red triangle")
     # runMainParser("put the square next to the circle")
+    runMainParser("make the red triangle")
