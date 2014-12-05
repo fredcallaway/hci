@@ -25,11 +25,6 @@ class Attributes(dict):
         self.idnum=None # tells us if the object has been drawn
         self.names=[]
 
-x=Attributes()
-x['color']='green'
-x['color']
-x.center=[1,1,1,1]
-
 
 def relMove(attr,command):
     [x,y]=attr.center
@@ -117,6 +112,7 @@ class HistoryEntry:
         self.history = [deepcopy(attr)]
         self.current = 0
         self.total = 1
+        self.deleted = False
     def update(self,attr):
         self.history.append(deepcopy(attr))
         self.current += 1
@@ -124,10 +120,12 @@ class HistoryEntry:
     def undo(self):
         self.current -= 1
         if self.current < 0:
+            self.deleted = True
             self.current = 0
             return None
         return self.get()
     def redo(self):
+        self.deleted = False
         self.current += 1
         if self.current >= self.total:
             self.current = self.total-1
@@ -150,9 +148,9 @@ class HistoryMap:
         #else:
         #    entry.update(attr)
         return self.newestID
-    def update(self,idnum):
+    def update(self,idnum,attr):
         if idnum<=newestID:
-            self.mappings[idnum]
+            self.mappings[idnum].update(attr)
         else:
             return
     #below method is used to compare Attributes 
@@ -192,7 +190,7 @@ def drawAttributes(attr):
     swh=canvasWidth()/2
     [cx,cy]=attr.center
     [w,h]=attr.span
-    loc=[(swh+cx)-w/2,sh-((shh+cy-w/2),w,h]
+    loc=[(swh+cx)-w/2,sh-(shh+cy-w/2),w,h]
     shape=attr['shape']
     color=attr['color']
     if shape is 'oval':
@@ -210,20 +208,55 @@ def drawAttributes(attr):
     else:
         return
     #now our shape has been drawn, and the attribute assigned an idnum
+    #update our canvas
+    canvas.update()
+
+#returns id of created history mapping
+def createDrawnAttributes(attr):
+    drawAttributes(attr)
     #this allows us to add it to the database
     global it
     global datbase
     it=database.add(attr)
-    #update our canvas
-    canvas.update()
-    return 
+    return it
 
-def updateAttributes(attr):
 
-"""
-def undo():
-    global it
+#note that these dont call update on canvas
+def hide(attrId):
     global database
-    if not it is None:
-        pass
-"""
+    canvas.itemconfig(database[attrId].get().idnum, state=HIDDEN)
+def unhide(attrId):
+    global database
+    canvas.itemconfig(database[attrId].get().idnum, state=NORMAL)
+
+#updates Attributes with attrId
+#   to Attributes in attr
+def updateDrawnAttributes(attrId, attr):
+    global database
+    hide(attrId) #erases the previous image
+    drawAttributes(attr)
+    database.update(attrId,attr)
+    it=attrId
+    return it
+
+def undo(attrId=it):
+    global database
+    if not attrId is None:
+        hide(attrId)
+        prev = database[attrId].undo()
+        if not prev is None:
+            unhide(attrId)
+            #drawAttributes(prev)
+
+def redo(attrId=it):
+    global database
+    if not attrId is None:
+        entry = database[attrId]
+        if entry.deleted:
+            unhide(attrId)
+        else:
+            hide(attrId)
+            entry.redo()
+            unhide(attrId)
+        
+
