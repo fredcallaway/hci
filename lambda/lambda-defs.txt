@@ -63,6 +63,8 @@ define undo: Lp[undo(p)]
 #The meaning of 'copy' is semantically equivalent in our world to the meaning of 'again'
 define copy: Lp[again(p)]
 define again: Lp[again(p)]
+# FRED: this meaning of copy is unintuitve to me. i think of copy as taking a shape as argument
+#       not an action, e.g. 'copy the blue square'
 
 #Directional Statements
 
@@ -102,10 +104,12 @@ define another: LP[Gx(P(x))]
 #it.shape is represented here as it-shape due to LC syntax restrictions
 #Version of one1 that only preserves shape info in new object
 #Draw a big blue square. Make a red one. => A red square. (Not big.)
-define one1: Lx[it-shape(x)]
+#define one1: Lx[itShape(x)]
 #Version of one1 that preserves all unchanged parameters in new object
 #Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
-define one1: Lx[it-parameters(x)]
+define one1: Lx[itParameters(x)]
+# FRED: for python, all function names must contain only letters numbers and underscores
+#       also, try to keep all but one possible definitions commented out so LC works
 
 #one2: for use with make2
 #Ex: 'make2 the blue one green'
@@ -115,18 +119,21 @@ define one2: LP.P
 #Ex: 'make2 the blue ones green'
 #ones iterates over the predicate in P to determine all of the entities in the on-screen list that satisfy P
 define ones: Lx[iterate(x)]
+# FRED: this structure won't work in python. i suggest making another operator
+# that behaves almost like iota but returns all shapes that match the condition
 
 #An 'and' for all occasions
 define and-e: LxLy[x & y]
 define and-t: LpLq[p & q]
 define and-et: LPLQLx[P(x) & Q(x)]
+# FRED: i can't get this to work. maybe it is because i don't have gamma defined
 
 #Ex: 'do that again'
 define do: Lp.p
 
 #Dummy function to extract result for Plop
-#Commented out because our trees don't currently include 'result'
-#define result: Lp[result(p)]
+# this line is necessary to work with python
+define result: Lp[result(p)]
 
 exercise tree
 title TITLE
@@ -134,16 +141,20 @@ directions DIRECTIONS
 
 #Test Sentences
 
-#[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
-#[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
-#[.VP [.V' [.V make2] [.NP it]] [.A green]]
-#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
-#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
-#[.VP [.V delete] [.DP [.D the] [.N square]]]
-#[.VP [.V undo] [.N that]]
-#[.VP [.V copy] [.N that]]
-#[.VP [.V' [.V do] [.N that]] [.A again]]
-#[.VP [.V make1] [.NP [.A another] [.N one1]]]
-#[.VP [.V' [.V move] [.NP it]] [.A left]]
-#[.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
-#[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
+[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
+[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
+[.VP [.V' [.V make2] [.NP it]] [.A green]]
+[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
+[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
+[.VP [.V delete] [.DP [.D the] [.N square]]]
+[.VP [.V undo] [.N that]]
+[.VP [.V copy] [.N that]]
+[.VP [.V' [.V do] [.N that]] [.A again]]
+[.VP [.V make1] [.NP [.A another] [.N one1]]]
+[.VP [.V' [.V move] [.NP it]] [.A left]]
+[.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
+[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
+[.VP [.V make1][.NP [.D another][.N-bar [.N square]]]]
+
+# Broken?
+[.VP [.VP [.V make1][.NP [.D a][.N-bar [.N square]]]][.PP [.P and-e][.NP [.D a][.N-bar [.N triangle]]]]]
