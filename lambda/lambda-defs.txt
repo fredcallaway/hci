@@ -115,17 +115,10 @@ define result: Lp.result(p)
 
 #Test Sentences
 
-<<<<<<< HEAD
 #[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
 #[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
 #[.VP [.V' [.V make2] [.NP it]] [.A green]]
 #[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
-=======
-#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
-#[.VP [.V' [.V make2] [.NP it]] [.A green]]
-#[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
-#[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
->>>>>>> 504799d88886cd2a35b270fbbd0b4f84556c536a
 #[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
 #[.VP [.V delete] [.DP [.D the] [.N square]]]
 #[.VP [.V undo] [.N that]]
