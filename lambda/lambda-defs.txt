@@ -16,8 +16,7 @@ use rule predicate modification
 use rule lambda abstraction
 
 #Screen
-
-define screen: Lx[screen(x)]
+#define screen: Lx[screen(x)]
 
 #Shapes
 
@@ -46,6 +45,9 @@ define make1: Lx[draw(x)]
 #make2 modifies the parameters of an existing object on the screen
 define make2: LxLP[P(x)]
 
+#move modifies the parameters of an existing object on the screen
+define move: LxLP[P(x)]
+
 #delete/remove/erase all move an item from the on-screen list to the off-screen list
 define delete: Lx[hide(x)]
 define remove: Lx[hide(x)]
@@ -57,8 +59,21 @@ define clear: clear
 #'undo' reverts the world to the state it was in prior to the instruction stored in 'that'
 define undo: Lp[undo(p)]
 
-#'copy' runs the instruction stored in 'that' again; 'copy' should not update 'that'
-define copy: Lp[copy(p)]
+#'again' runs the instruction stored in 'that' again; 'again' should not update 'that'
+#The meaning of 'copy' is semantically equivalent in our world to the meaning of 'again'
+define copy: Lp[again(p)]
+define again: Lp[again(p)]
+
+#Directional Statements
+
+#Ex: make1 a circle on the left side of the screen
+define on-the-left-side-of-the-screen: Lx[large-left-displacement(x)]
+
+#Ex: move it left
+define left: Lx[small-left-displacement(x)]
+
+#Ex: move the circle to the left of the square
+define to-the-left-of: LxLy[left(x,y)]
 
 #Function Words
 
@@ -106,12 +121,16 @@ define and-e: LxLy[x & y]
 define and-t: LpLq[p & q]
 define and-et: LPLQLx[P(x) & Q(x)]
 
+#Ex: 'do that again'
+define do: Lp.p
+
+#Dummy function to extract result for Plop
+#Commented out because our trees don't currently include 'result'
+#define result: Lp[result(p)]
+
 exercise tree
 title TITLE
 directions DIRECTIONS
-
-#dummy function for plop
-define result: Lp.result(p)
 
 #Test Sentences
 
@@ -123,4 +142,8 @@ define result: Lp.result(p)
 #[.VP [.V delete] [.DP [.D the] [.N square]]]
 #[.VP [.V undo] [.N that]]
 #[.VP [.V copy] [.N that]]
+#[.VP [.V' [.V do] [.N that]] [.A again]]
 #[.VP [.V make1] [.NP [.A another] [.N one1]]]
+#[.VP [.V' [.V move] [.NP it]] [.A left]]
+#[.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
+#[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
