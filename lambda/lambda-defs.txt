@@ -130,4 +130,4 @@ define result: Lp.result(p)
 #[.VP [.V delete] [.DP [.D the] [.N square]]]
 #[.VP [.V undo] [.N that]]
 #[.VP [.V copy] [.N that]]
-[.VP [.V make1] [.NP [.A another] [.N one1]]]
+#[.VP [.V make1] [.NP [.A another] [.N one1]]]
