@@ -8,9 +8,8 @@
 import graphics
 from bash import bash
 import re
+shapes = graphics.database.mappings
 local_vars = {}
-shapes = []
-named_shapes = {}
 class ParseError(Exception):
     def __init__(self, value):
         self.value = value
@@ -20,17 +19,15 @@ class ParseError(Exception):
 def runMainParser(cmd):
     global local_vars
     local_vars={}
-    """translates user input into (logical notation)
+    """translates user input into logical notation
         - parse works recursively, applying functions and operators
-        - variables in logical form are stored in local_vars
-            - these variables are tied to an attribute list
-            - a variable can represent an existing shape or a hypothetical shape
+        - variables in logical notation are stored in local_vars
+            - these variables are tied to an Attributes object
     """
     # bitpar
     cmd=clean(cmd)
     cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
     cmd=label(cmd)
-    print cmd
 
     # update input.txt
     bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt")
@@ -41,7 +38,7 @@ def runMainParser(cmd):
     bash("make -C ../lambda input.fml")
     fml=`bash('cat ../lambda/input.fml')`
     if fml == '': raise ParseError('cannot be interpreted by lambda calculator')
-
+    print fml
     lambdaCalc_output=fml.split('true ')[1]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print lambdaCalc_output
@@ -68,15 +65,14 @@ def parse(string):
     print "parse("+string+")"
     # variables
     if string in local_vars: # e.g. 'y'
-        return local_vars[string]
-        print local_vars[string]
-    # elif string in named_shapes:
-        # return named_shapes[string]
-    # elif string is 'it':
-        # return graphics.it
+        return string
+        print string
+    elif string in graphics.names:
+        return graphics.names[string]
+    elif string is 'it':
+        return graphics.it
 
     # operators
-    # this is essentially binding
     elif string.find('\gamma') == 0:
         return gamma(string[7],string[9:len(string)-2])
     elif string.find('\iota') == 0:
@@ -85,26 +81,38 @@ def parse(string):
 
     # function application
     else:
-        fun = string.split( '(' , 1)[0] # e.g. 'draw' or 'red'
-        arg = parse(string.split( '(' , 1)[1][:-1])  # e.g. 'Gy[(red(y) & square(y)]' or 'y'
+        fun = string.split( '(' , 1)[0]
+        arg = parse(string.split( '(' , 1)[1][:-1])
         exec(fun+'(arg)')
 
-def draw(shape):
+def getShape(id):
+    print 'id: '+`id`
+    if type(id)==int: # idnum
+        return shapes[id]
+    elif type(id)==str and len(id)==1: # local var
+        return local_vars[id]
+    else: # name
+        return graphics.names[id]
+def draw(id):
+    shape=getShape(id)
     """creates a new shape"""
-    print 'drawing: '+shape
-    # graphics.drawAttributes(shape)
+    print 'drawing: '+`shape`+'with id: '+id
+    graphics.drawAttributes(shape)
 
-def one1(shape):
+def one1(id):
+    shape=getShape(id)
+    it = getShape(graphics.it)
     """fills unspecified attributes of var with attributes of graphics.it"""
-    for attribute in it():
-            graphics.updateAttributes(shape, graphics.it[attribute])
+    for attribute in it:
+            graphics.updateAttributes(shape, it[attribute])
 
-def one2(shape):
+def one2(id):
     """returns: most recently mentioned shape with properties in shape"""
+    shape=getShape(id)
     pass
 
 def gamma(var,string):
-    """returns: a new shape with attributes described in string"""
+    """returns: var tied to a new shape with attributes described in string"""
     global local_vars
     #create a new local variable
     #local variables are keys for local_vars
@@ -112,10 +120,10 @@ def gamma(var,string):
     #apply functions to new local variable, updating its attibute list
     for substring in string.split(" & "):
         parse(substring)
-    return local_vars[var]
+    return var
 
 def iota(var, string):
-    """returns: the unique shape matching attributes in string
+    """returns: idnum of the unique shape matching attributes in string
        throw error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
     local_vars[var]=graphics.Attributes()
@@ -124,46 +132,63 @@ def iota(var, string):
     matches = graphics.findMatches(local_vars[var])
     if len(matches) != 1: raise ParseError('iota ambiguity')
     idnum = matches[0][0]
-    return shapes[idnum]
+    return idnum
 
 #COLORS:
-def red(shape):
+def red(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'red')
-def orange(shape):
+def orange(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'orange')
-def yellow(shape):
+def yellow(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'yellow')
-def green(shape):
+def green(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'green')
-def blue(shape):
+def blue(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'blue')
-def purple(shape):
+def purple(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'purple')
-def white(shape):
+def white(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'white')
-def black(shape):
+def black(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'black')
 
 #SIZES:
-def tall(shape):
+def tall(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'tall')
-def short(shape):
+def short(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'short')
-def wide(shape):
+def wide(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'wide')
-def narrow(shape):
+def narrow(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'narrow')
-def large(shape):
+def large(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'large')
-def small(shape):
+def small(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'small')
 
 #SHAPES:
-def circle(shape):
+def circle(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'circle')
-def square(shape):
+def square(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'square')
-def triangle(shape):
+def triangle(id):
+    shape=getShape(id)
     graphics.updateAttributes(shape, 'triangle')
     
 
