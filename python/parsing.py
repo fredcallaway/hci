@@ -9,6 +9,7 @@ import graphics
 from bash import bash
 import re
 shapes = graphics.database.mappings
+references = graphics.database.references
 local_vars = {}
 class ParseError(Exception):
     def __init__(self, value):
@@ -38,8 +39,7 @@ def runMainParser(cmd):
     bash("make -C ../lambda input.fml")
     fml=`bash('cat ../lambda/input.fml')`
     if fml == '': raise ParseError('cannot be interpreted by lambda calculator')
-    print fml
-    lambdaCalc_output=fml.split('true ')[1]
+    lambdaCalc_output=fml.split('true ')[1][:-1]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print lambdaCalc_output
     parse(lambdaCalc_output)
@@ -62,7 +62,7 @@ def label(cmd):
 
 def parse(string):
     global local_vars
-    print "parse("+string+")"
+    # print "parse("+string+")"
 
     # variables
     if string in local_vars: # e.g. 'y'
@@ -70,15 +70,16 @@ def parse(string):
         print string
     elif string in graphics.names:
         return graphics.names[string]
-    elif string is 'it':
-        return graphics.it
+    elif string == 'it':
+        # print 'it: ',references[0]
+        return references[0]
 
     # operators
     elif string.find('\gamma') == 0:
-        return gamma(string[7],string[9:len(string)-2])
+        return gamma(string[7],string[9:-1])
     elif string.find('\iota') == 0:
         # treating iota as gamma for now
-        return gamma(string[6],string[8:len(string)-2])
+        return gamma(string[6],string[8:-1])
 
     # function application
     else:
@@ -87,21 +88,24 @@ def parse(string):
         exec(fun+'(arg)')
 
 
-def draw(id):
-    """draws the hypothetical shape associated with id"""
-    shape=getShape(id)
-    print 'drawing: '+`shape`+'with id: '+id
-    graphics.drawAttributes(shape)
+def draw(var):
+    """draws the hypothetical shape associated with var"""
+    shape=getShape(var)
+    graphics.createShape(shape)
 
 def hide(id):
-    """hides the existing shape associated with idnum
-    or """
+    """hides the existing shape associated with id"""
+    shape = getShape(id)
+    if shape.idnum: # id refers to an existing shape
+        graphics.hide(shape)
+    else: # id refers to hypothetical shape
+        graphics.hide(pick(shape))
+        # TODO: implement pick()
     
-
 def itParamaters(id):
-    """fills unspecified attributes of var with attributes of graphics.it"""
+    """fills unspecified attributes of var with attributes of references[0]"""
     shape=getShape(id)
-    it = getShape(graphics.it)
+    it = getShape(references[0])
     for attribute in it:
             graphics.updateAttributes(shape, it[attribute])
 
@@ -112,12 +116,11 @@ def one2(id):
 
 
 #OPERATORS:
-def gamma(var,string):
+def gamma(var, string):
     """returns: var tied to a new shape with attributes described in string"""
     global local_vars
     #create a new local variable
-    #local variables are keys for local_vars
-    local_vars[var]=graphics.Attributes()
+    local_vars[var]=graphics.Shape()
     #apply functions to new local variable, updating its attibute list
     for substring in string.split(" & "):
         parse(substring)
@@ -213,28 +216,31 @@ def above(id1,id2):
     shape1=getShape(id1)
     shape2=getShape(id2)
     loc= lambda (x,y): y > shape2['center'] + (shape2['span'][1]/2 + shape1['span'][1]/2)
+def over(id1,id2):
+    pass
+def inside(id1,id2):
+    pass
 
 #KINDS:
 def circle(id):
     shape=getShape(id)
-    graphics.updateAttributes(kind, 'circle')
+    graphics.updateAttributes(shape, 'circle')
 def square(id):
     shape=getShape(id)
-    graphics.updateAttributes(kind, 'square')
+    graphics.updateAttributes(shape, 'square')
 def triangle(id):
     shape=getShape(id)
-    graphics.updateAttributes(kind, 'triangle')
+    graphics.updateAttributes(shape, 'triangle')
     
 
 #HELPERS:
 def getShape(id):
-    print 'id: '+`id`
     if type(id)==int: # idnum
         return shapes[id]
     elif type(id)==str and len(id)==1: # local var
         return local_vars[id]
     else: # name
-        return graphics.names[id]
+        return shapes[graphics.names[id]]
 
 
 if __name__ == "__main__":
@@ -242,3 +248,4 @@ if __name__ == "__main__":
     # runMainParser("make a red triangle")
     # runMainParser("put the square next to the circle")
     runMainParser("make the red triangle")
+    runMainParser("delete the triangle")

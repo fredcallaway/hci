@@ -7,9 +7,11 @@ from copy import deepcopy
 #reference to the graphics canvas
 canvas = None
 def canvasHeight():
+    return 100
     return canvas.winfo_screenheight()
 #TODO check this works
 def canvasWidth():
+    return 100
     return canvas.winfo_screenwidth()
 ##TODO check this works
 def standardSizes():
@@ -24,7 +26,7 @@ class Shape(dict):
         self.center=(0.0,0.0)
         self.span=standardSizes()
         self.idnum=None # tells us if the object has been drawn
-
+        self.isSet=False # object represents the set of all objects matching attrbutes
         self.name=None
         #FRED: - an object should only be allowed to have one name, shouldn't it?
         #      - we should also prevent the user from assigning one name to two objects
@@ -67,9 +69,10 @@ def relSize(shape,command):
         return
     shape.span=[w,h]
 
-names={}
-def addName(shape,name):
-    shape['name']=name
+names={} # names to idnums
+def addName(idnum,name):
+    database.mappings[idnum].name=name
+    names[name]=idnum
 
 #constants for specifying attributes that are absolute, ie enumerated
 attrTypes = ('kind','size','positioning')
@@ -141,20 +144,25 @@ class HistoryEntry:
 class HistoryMap:
     def __init__(self):
         self.mappings={}
+        self.references=[]
         self.newestID = -1
-    def getNewID():
+    def getNewID(self):
         self.newestID += 1
         return self.newestID
     def add(self,shape):
         #entry = self.mappings.get(shape.idnum,None)
         #if entry == None:
-        self.mappings[getNewID()]=HistoryEntry(shape)
+        newidn = self.getNewID()
+        shape.idnum=newid
+        self.mappings[newid]=HistoryEntry(shape)
+        self.references.insert(0,newid)
         #else:
         #    entry.update(shape)
         return self.newestID
-    def update(self,idnum,shape):
+    def update(self,idnum):
         if idnum<=newestID:
-            self.mappings[idnum].update(shape)
+            # self.mappings[idnum].update(shape)
+            self.references.insert(0,idnum)
         else:
             return
     #below method is used to compare Shape 
@@ -216,31 +224,27 @@ def drawShape(shape):
     canvas.update()
 
 #returns id of created history mapping
-def createDrawnShape(shape):
-    drawShape(shape)
-    #this allows us to add it to the database
-    global it
+def createShape(shape):
+    print 'createShape ',shape
+    # drawShape(shape)
     global datbase
-    it=database.add(shape)
-    return it
+    database.add(shape)
 
 #note that these dont call update on canvas
 def hide(idnum):
     global database
-    canvas.itemconfig(database[idnum].get().idnum, state=HIDDEN)
+    print 'hide ',idnum
+    # canvas.itemconfig(database[idnum].get().idnum, state=HIDDEN)
 def unhide(idnum):
     global database
     canvas.itemconfig(database[idnum].get().idnum, state=NORMAL)
 
-#updates Shape with idnum
-#   to Shape in shape
+# attaches shape to idnum
 def updateDrawnShape(idnum, shape):
     global database
     hide(idnum) #erases the previous image
     drawShape(shape)
-    database.update(idnum,shape)
-    it=idnum
-    return it
+    database.update(idnum)
 
 def undo(idnum=it):
     global database
@@ -261,5 +265,3 @@ def redo(idnum=it):
             hide(idnum)
             entry.redo()
             unhide(idnum)
-        
-
