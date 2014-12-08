@@ -180,6 +180,20 @@ def small(id):
     shape=getShape(id)
     graphics.updateAttributes(shape, 'small')
 
+#LOCATIONS:
+def left(id):
+    shape=getShape(id)
+    graphics.updateAttributes(shape, 'left')
+def right(id):
+    shape=getShape(id)
+    graphics.updateAttributes(shape, 'right')
+def up(id):
+    shape=getShape(id)
+    graphics.updateAttributes(shape, 'up')
+def down(id):
+    shape=getShape(id)
+    graphics.updateAttributes(shape, 'down')
+
 #SHAPES:
 def circle(id):
     shape=getShape(id)

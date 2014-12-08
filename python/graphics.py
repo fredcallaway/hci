@@ -162,13 +162,13 @@ class HistoryMap:
     #note that None matches all
     #and locations and sizes are not compared
     #   (rely on wide, narrow descriptors instead)
-    #return list of id,Shape pairs: [(id,Shape)]
+    #return list of ids
     def findMatches(self,shape):
         aVals = shape.values()
         matches=[]
         for (idnum,histEntry) in self.mappings.iteritems():
             if all(map(lambda x: x in aVals, entry.get().values())):
-                matches.append((idnum,histEntry.get()))
+                matches.append(idnum)
         return matches
 
 
