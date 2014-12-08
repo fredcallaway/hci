@@ -63,6 +63,7 @@ def label(cmd):
 def parse(string):
     global local_vars
     print "parse("+string+")"
+
     # variables
     if string in local_vars: # e.g. 'y'
         return string
@@ -85,24 +86,22 @@ def parse(string):
         arg = parse(string.split( '(' , 1)[1][:-1])
         exec(fun+'(arg)')
 
-def getShape(id):
-    print 'id: '+`id`
-    if type(id)==int: # idnum
-        return shapes[id]
-    elif type(id)==str and len(id)==1: # local var
-        return local_vars[id]
-    else: # name
-        return graphics.names[id]
+
 def draw(id):
+    """draws the hypothetical shape associated with id"""
     shape=getShape(id)
-    """creates a new shape"""
     print 'drawing: '+`shape`+'with id: '+id
     graphics.drawAttributes(shape)
 
-def one1(id):
+def hide(id):
+    """hides the existing shape associated with idnum
+    or """
+    
+
+def itParamaters(id):
+    """fills unspecified attributes of var with attributes of graphics.it"""
     shape=getShape(id)
     it = getShape(graphics.it)
-    """fills unspecified attributes of var with attributes of graphics.it"""
     for attribute in it:
             graphics.updateAttributes(shape, it[attribute])
 
@@ -111,6 +110,8 @@ def one2(id):
     shape=getShape(id)
     pass
 
+
+#OPERATORS:
 def gamma(var,string):
     """returns: var tied to a new shape with attributes described in string"""
     global local_vars
@@ -194,17 +195,46 @@ def down(id):
     shape=getShape(id)
     graphics.updateAttributes(shape, 'down')
 
-#SHAPES:
+def leftOf(id1,id2):
+    shape1=getShape(id1)
+    shape2=getShape(id2)
+    # uncertain values are functions that return True if given a value that matches the requirement
+    # TODO: combine functions for "to the left of the triangle and above the square"
+    loc= lambda (x,y): x < shape2['center'] - (shape2['span'][0]/2 + shape1['span'][0]/2)
+def rightOf(id1,id2):
+    shape1=getShape(id1)
+    shape2=getShape(id2)
+    loc= lambda (x,y): x > shape2['center'] + (shape2['span'][0]/2 + shape1['span'][0]/2)
+def below(id1,id2):
+    shape1=getShape(id1)
+    shape2=getShape(id2)
+    loc= lambda (x,y): x < shape2['center'] - (shape2['span'][1]/2 + shape1['span'][1]/2)
+def above(id1,id2):
+    shape1=getShape(id1)
+    shape2=getShape(id2)
+    loc= lambda (x,y): y > shape2['center'] + (shape2['span'][1]/2 + shape1['span'][1]/2)
+
+#KINDS:
 def circle(id):
     shape=getShape(id)
-    graphics.updateAttributes(shape, 'circle')
+    graphics.updateAttributes(kind, 'circle')
 def square(id):
     shape=getShape(id)
-    graphics.updateAttributes(shape, 'square')
+    graphics.updateAttributes(kind, 'square')
 def triangle(id):
     shape=getShape(id)
-    graphics.updateAttributes(shape, 'triangle')
+    graphics.updateAttributes(kind, 'triangle')
     
+
+#HELPERS:
+def getShape(id):
+    print 'id: '+`id`
+    if type(id)==int: # idnum
+        return shapes[id]
+    elif type(id)==str and len(id)==1: # local var
+        return local_vars[id]
+    else: # name
+        return graphics.names[id]
 
 
 if __name__ == "__main__":

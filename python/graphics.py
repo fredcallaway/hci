@@ -21,7 +21,7 @@ class Shape(dict):
     def __init__(self,*args,**kw):
         super(Shape,self).__init__(*args,**kw)
         #define special fields
-        self.center=[0.0,0.0]
+        self.center=(0.0,0.0)
         self.span=standardSizes()
         self.idnum=None # tells us if the object has been drawn
 
