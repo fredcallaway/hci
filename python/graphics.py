@@ -138,7 +138,7 @@ class HistoryEntry:
             self.current = self.total-1
             return None
         return self.get()
-    def get():
+    def get(self):
         return self.history[self.current]
 
 class HistoryMap:
@@ -152,7 +152,7 @@ class HistoryMap:
     def add(self,shape):
         #entry = self.mappings.get(shape.idnum,None)
         #if entry == None:
-        newidn = self.getNewID()
+        newid = self.getNewID()
         shape.idnum=newid
         self.mappings[newid]=HistoryEntry(shape)
         self.references.insert(0,newid)
@@ -175,7 +175,8 @@ class HistoryMap:
         aVals = shape.values()
         matches=[]
         for (idnum,histEntry) in self.mappings.iteritems():
-            if all(map(lambda x: x in aVals, entry.get().values())):
+            print histEntry.get()
+            if all(map(lambda x: x in histEntry.get().values(), aVals)):
                 matches.append(idnum)
         return matches
 

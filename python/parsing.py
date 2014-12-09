@@ -35,10 +35,10 @@ def runMainParser(cmd):
     bash("echo '"+cmd+"' >> ../lambda/input.txt")
 
     # lambda calculator & plop
-    bash("java -jar ../lambda/lambda-auto.jar ../lambda/input.txt > ../lambda/input.tex")
+    bash("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex")
     bash("make -C ../lambda input.fml")
     fml=`bash('cat ../lambda/input.fml')`
-    if fml == '': raise ParseError('cannot be interpreted by lambda calculator')
+    if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-1]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print lambdaCalc_output
@@ -79,7 +79,7 @@ def parse(string):
         return gamma(string[7],string[9:-1])
     elif string.find('\iota') == 0:
         # treating iota as gamma for now
-        return gamma(string[6],string[8:-1])
+        return iota(string[6],string[8:-1])
 
     # function application
     else:
@@ -96,7 +96,7 @@ def draw(var):
 def hide(id):
     """hides the existing shape associated with id"""
     shape = getShape(id)
-    if shape.idnum: # id refers to an existing shape
+    if True: #shape.idnum: # id refers to an existing shape
         graphics.hide(shape)
     else: # id refers to hypothetical shape
         graphics.hide(pick(shape))
@@ -130,12 +130,12 @@ def iota(var, string):
     """returns: idnum of the unique shape matching attributes in string
        throw error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
-    local_vars[var]=graphics.Attributes()
+    local_vars[var]=graphics.Shape()
     for substring in string.split(" & "):
         parse(substring)
-    matches = graphics.findMatches(local_vars[var])
+    matches = graphics.database.findMatches(local_vars[var])
     if len(matches) != 1: raise ParseError('iota ambiguity')
-    idnum = matches[0][0]
+    idnum = matches[0]
     return idnum
 
 #COLORS:
@@ -236,16 +236,15 @@ def triangle(id):
 #HELPERS:
 def getShape(id):
     if type(id)==int: # idnum
-        return shapes[id]
+        return shapes[id].get()
     elif type(id)==str and len(id)==1: # local var
         return local_vars[id]
     else: # name
-        return shapes[graphics.names[id]]
+        return shapes[graphics.names[id]].get()
 
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
-    # runMainParser("make a red triangle")
     # runMainParser("put the square next to the circle")
-    runMainParser("make the red triangle")
+    runMainParser("draw a red triangle")
     runMainParser("delete the triangle")
