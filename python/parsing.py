@@ -6,6 +6,7 @@
 # used by graphics
 
 import graphics
+import random
 #from bash import bash
 import re
 shapes = graphics.database.mappings
@@ -107,7 +108,6 @@ def hide(id):
         graphics.hide(shape)
     else: # id refers to hypothetical shape
         graphics.hide(pick(shape))
-        # TODO: implement pick()
     
 def itParamaters(id):
     """fills unspecified attributes of var with attributes of references[0]"""
@@ -120,6 +120,7 @@ def one2(id):
     """returns: most recently mentioned shape with properties in shape"""
     shape=getShape(id)
     pass
+
 
 
 #OPERATORS:
