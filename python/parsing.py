@@ -7,7 +7,8 @@
 import sys
 import graphics as g
 import random
-from bash import bash
+# from bash import bash
+import os
 import re
 local_vars = {}
 
@@ -25,7 +26,7 @@ class ParseError(Exception):
 def runMainParser(cmd):
     global local_vars
     local_vars={}
-    
+    bash=os.system
     # bitpar
     cmd=clean(cmd)
     cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
