@@ -56,7 +56,7 @@ define narrower: Lx[narrow(x)]
 #'on-the-X-side-of-the-screen'
 #Ex: make1 a circle on the left side of the screen
 #Ex: make1 a circle on the right side of the screen
-define on-the-left-side-of-the-screen: Lx[screenLeft(x)]
+define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
 define on-the-right-side-of-the-screen: Lx[screenRight(x)]
 
 #'at-the-X-of-the-screen'
