@@ -4,12 +4,11 @@
 # from Lambda Calculator to graphics calls
 # It imports attribute lists and graphics objects
 # used by graphics
-
+import sys
 import graphics as g
 import random
 from bash import bash
 import re
-shapes = g.database
 local_vars = {}
 
 class ParseError(Exception):
@@ -49,6 +48,19 @@ def runMainParser(cmd):
 def clean(cmd):
     cmd = re.sub('next to', 'next-to', cmd)
     cmd = re.sub('on top of', 'on-top-of', cmd)
+    cmd = re.sub('to the left','to-the-left',cmd)
+    cmd = re.sub('to the left of','to-the-left-of',cmd)
+    cmd = re.sub('to the left side of','to-the-left-side-of',cmd)
+    cmd = re.sub('on the left side of','on-the-left-side-of',cmd)
+    cmd = re.sub('to the right','to-the-right',cmd)
+    cmd = re.sub('to the right of','to-the-right-of',cmd)
+    cmd = re.sub('to the right side of','to-the-right-side-of',cmd)
+    cmd = re.sub('on the right side of','on-the-right-side-of',cmd)
+    cmd = re.sub('on top of','on-top-of',cmd)
+    cmd = re.sub('next to','next-to',cmd)
+    cmd = re.sub('inside of','inside-of',cmd)
+    cmd = re.sub('in the middle of','in-the-middle-of',cmd)
+
     return cmd
 
 def label(cmd):
@@ -70,8 +82,6 @@ def parse(string):
     if string in local_vars: # e.g. 'y'
         return string
         print string
-    elif string in g.names:
-        return g.names[string]
     elif string == 'it':
         # print 'it: ',references[0]
         return references[0]
@@ -105,31 +115,31 @@ def hide(id):
 def itParamaters(id):
     """fills unspecified attributes of var with attributes of references[0]"""
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'attributes ')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'attributes ')
+        g.updateAttList(attList, 'attributes ')
     for attribute in it:
-            g.updateAttributes(shape, it[attribute])
+            g.updateAttList(shape, it[attribute])
 
 def one2(id):
     """returns: most recently mentioned shape with properties in shape"""
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'recently ')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'recently ')
+        g.updateAttList(attList, 'recently ')
 
 #OPERATORS:
 def gamma(var, string):
     """returns: var tied to a new shape with attributes described in string"""
     global local_vars
     #create a new local variable
-    local_vars[var]=g.Attributes()
+    local_vars[var]=g.AttributeList()
     #apply functions to new local variable, updating its attibute list
     for substring in string.split(" & "):
         parse(substring)
@@ -139,7 +149,7 @@ def iota(var, string):
     """returns: shapeID of the unique shape matching attributes in string
        throw error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
-    local_vars[var]=g.Attributes()
+    local_vars[var]=g.AttributeList()
     for substring in string.split(" & "):
         parse(substring)
     matches = g.database.findMatches(local_vars[var])
@@ -150,152 +160,152 @@ def iota(var, string):
 #COLORS:
 def red(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'red')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'red')
+        g.updateAttList(attList, 'red')
 def orange(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'orange')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'orange')
+        g.updateAttList(attList, 'orange')
 def yellow(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'yellow')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'yellow')
+        g.updateAttList(attList, 'yellow')
 def green(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'green')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'green')
+        g.updateAttList(attList, 'green')
 def blue(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'blue')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'blue')
+        g.updateAttList(attList, 'blue')
 def purple(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'purple')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'purple')
+        g.updateAttList(attList, 'purple')
 def white(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'white')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'white')
+        g.updateAttList(attList, 'white')
 def black(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'black')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'black')
+        g.updateAttList(attList, 'black')
 
 #SIZES:
 def tall(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'tall')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'tall')
+        g.updateAttList(attList, 'tall')
 def short(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'short')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'short')
+        g.updateAttList(attList, 'short')
 def wide(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'wide')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'wide')
+        g.updateAttList(attList, 'wide')
 def narrow(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'narrow')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'narrow')
-def large(id):
+        g.updateAttList(attList, 'narrow')
+def big(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'large')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'large')
+        g.updateAttList(attList, 'large')
 def small(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'small')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'small')
+        g.updateAttList(attList, 'small')
 
 #LOCATIONS:
 def left(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'left')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'left')
+        g.updateAttList(attList, 'left')
 def right(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'right')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'right')
+        g.updateAttList(attList, 'right')
 def up(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'up')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'up')
+        g.updateAttList(attList, 'up')
 def down(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'down')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'down')
+        g.updateAttList(attList, 'down')
 
 def leftOf(id1,id2):
     shape1=getShape(id1)
@@ -311,40 +321,38 @@ def below(id1,id2):
     shape1=getShape(id1)
     shape2=getShape(id2)
     loc= lambda (x,y): x < shape2['center'] - (shape2['span'][1]/2 + shape1['span'][1]/2)
-def above(id1,id2):
+def over(id1,id2):
     shape1=getShape(id1)
     shape2=getShape(id2)
     loc= lambda (x,y): y > shape2['center'] + (shape2['span'][1]/2 + shape1['span'][1]/2)
-def over(id1,id2):
-    pass
-def inside(id1,id2):
+def insideOf(id1,id2):
     pass
 
 #KINDS:
 def circle(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'circle')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'circle')
+        g.updateAttList(attList, 'circle')
 def square(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'square')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'square')
+        g.updateAttList(attList, 'square')
 def triangle(id):
     if type(id) is int: # shapeID
-        attList = database[id].getAttList()
+        attList = g.database[id].getAttList()
         g.updateAttList(attList, 'triangle')
         g.updateShape(id,attList)
     else: # local var
         attList = local_vars[id]
-        g.updateAttributes(attList, 'triangle')
+        g.updateAttList(attList, 'triangle')
     
 
 #HELPERS:
@@ -365,5 +373,4 @@ def pickShape(attList):
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
     # runMainParser("put the square next to the circle")
-    runMainParser("draw a red triangle")
-    runMainParser("delete the triangle")
+    runMainParser(sys.argv[1])

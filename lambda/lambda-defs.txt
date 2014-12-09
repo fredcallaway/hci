@@ -70,7 +70,9 @@ define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
 #Ex: move it left/right
 #Ex: move it up/down
 define left: Lx[left(x)]
+define to-the-left: Lx[left(x)]
 define right: Lx[right(x)]
+define to-the-right: Lx[right(x)]
 define up: Lx[up(x)]
 define down: Lx[down(x)]
 
