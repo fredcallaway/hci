@@ -84,7 +84,7 @@ def updateAttList(attList,command):
             changeTypes[i](attList,command)
             return
     #check for absolute changes
-    setAttributes(attList, command)
+    setAttList(attList, command)
 
 #use this function when creating a new Attributes
 #ie make1
@@ -189,7 +189,7 @@ def drawAttList(attList):
         attList.imageID=canvas.create_oval(bbox,fill=color,tag=attList.names)
     elif shape is 'circle':
         r=(w+h)/2
-        attList.imageID=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
+        attList.imageID=canvas.create_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
     elif shape is 'rectangle':
         attList.imageID=canvas.create_rectangle(bbox,fill=color,tag=attList.names)
     elif shape is 'square':
