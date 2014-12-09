@@ -1,117 +1,158 @@
-# from gui import *
-from bash import bash
+#!/usr/bin/python
 
-def AttributeList():
-    #for testing purposes
-    return {'shape':None,'color':None}
+#import graphics
+from Tkinter import *
+from window_management import MainFrame
+from parsing import runMainParser
+import sys
+import StringIO
+import contextlib
+@contextlib.contextmanager
+def stdoutIO(stdout=None,stderr=None):
+    old = sys.stdout
+    olderr = sys.stderr
+    if stderr is None:
+        stderr = StringIO.StringIO()
+    if stdout is None:
+        stdout = StringIO.StringIO()
+    #sys.stderr = stderr
+    sys.stdout = stdout
+    yield (stdout)
+    sys.stderr = olderr
+    sys.stdout = old
 
-def parseInput(input):
-    """translates user input into (logical notation)
-        - parse works recursively, applying functions and operators
-        - variables in logical form are stored in local_vars
-            - these variables are tied to an attribute list
-            - a variable can represent an existing shape or a hypothetical shape
+import graphics as g
+gns = {}
+lns = {}
+ns={}
+def updateNS():
+    global ns
+    ns.update(globals())
+    ns.update(locals())
+def foo():
+    global aid
+    aid=g.Attributes()
+    print 'aid=Attributes()'
+    g.setAttributes(aid,'oval')
+    g.setAttributes(aid,'green')
+    g.createDrawnAttributes(aid)
+def runCodeParser(cmd):
+    global ns
+    code=compile(cmd,'<string>','exec')
+    with stdoutIO() as (out):
+        #ns['it']=g.it
+        ns.update(globals())
+        ns.update(locals())
+        exec cmd in ns
+    out.seek(0)
+    cont = out.read()
+    out.close()
+    lc=len(cont)
     """
-    # parse=bash("sh ../bitpar/parse '"+input+"'") # ouput: [.VP [.V draw][.NP [.D a][.N-bar [.N square]]]]
-    bash("java -jar ../lambda/lambda-auto.jar ../lambda/input.txt > ../lambda/input.tex")
-    fml=bash("make -C ../lambda input.fml")
-    print fml
-    cmd=`fml`.split('true ')[1]
-    
-    # TEST CASES
-    # cmd="draw(Gy[red(y) & square(y)])" 
-    cmd="draw(\gamma y(red(y) & square(y)))."
+    err.seek(0)
+    e=err.read()
+    err.close()
+    le=len(e)
+    if le>0 and e[le-1]=='\n':
+        e=e[0:(le-1)]
+    """
+    if lc>0 and cont[lc-1]=='\n':
+        cont=cont[0:(lc-1)]
+    if lc>0:# or le>0:
+        return (cont)
+    else:
+        return None
 
-    print cmd
-    parse(cmd)
-#   - create attribute list, y
-#   - go thrrough bracketed list and apply functions to y
-# Gy[square(y) ] & nextTo(y,(ix[blue(x)])&square(x)]]
-def parse(string):
-    print "parse("+string+")"
-    global local_vars # a dictionary that contains mappings from variables to attribute lists
-    if string in local_vars: # e.g. 'y'
-        return string 
-    # if string in names:
-        # return string
+# Some local variables
+tkWindow = None
+main_frame = None # container for window widgets (canvas, entry, text)
+#the below may belong in another module
+cmd_history = []
+cmd_index=0
+temp_cmd=""
 
-    # operators
-    elif string.find('\gamma') == 0:
-        return gamma(string[7],string[9:len(string)-2])
-    elif string.find('\iota') == 0:
-        # treating iota as gamma for now
-        return gamma(string[7],string[9:len(string)-2])
-
-    else: # function application
-        fun = string.split( '(' , 1)[0] # e.g. 'draw' or 'red'
-        arg = parse(string.split( '(' , 1)[1][:-1])  # e.g. 'Gy[(red(y) & square(y)]' or 'y'
-        exec(fun+'(arg)')
-
-def draw(attr):
-    print 'Gui.create('+`local_vars[attr]`+')'
-def make1(attr):
-   print 'Gui.create()'
-
-def make2(shape, string):
-    # updates shape with non-null attributes in attr
-    pass
-
-def gamma(var,string):
-    # returns variable associated with attribute list from attributes in string
-    global local_vars
-    #create a new local variable
-    local_vars[var]=AttributeList()
-    #apply functions to new local variable, updating its attibute list
-    for substring in string.split(" & "):
-        parse(substring)
-    return var
-
-def iota(var, string):
-    # goes through existing shapes and finds ones that matches attributes in string
-    # if there is one shape that matches, assign var to that shape
-    # else, throw error: "iota ambiguity"
-
-    pass
-
-#COLORS:
-def red(var):
-    global local_vars
-    local_vars[var]['color']='red'
-def orange(var):
-    global local_vars
-    local_vars[var]['color']='orange'
-def yellow(var):
-    global local_vars
-    local_vars[var]['color']='yellow'
-def green(var):
-    global local_vars
-    local_vars[var]['color']='green'
-def blue(var):
-    global local_vars
-    local_vars[var]['color']='blue'
-def purple(var):
-    global local_vars
-    local_vars[var]['color']='purple'
-def white(var):
-    global local_vars
-    local_vars[var]['color']='white'
-def black(var):
-    global local_vars
-    local_vars[var]['color']='black'
-
-#SHAPES:
-def circle(var):
-    global local_vars
-    local_vars[var]['shape']='circle'
-def square(var):
-    global local_vars
-    local_vars[var]['shape']='square'
-def triangle(var):
-    global local_vars
-    local_vars[var]['shape']='triangle'
+def cmdLineHistoryDown(event):
+	global main_frame,cmd_history,cmd_index,temp_cmd
+	cmd_index+=1
+	if cmd_index>len(cmd_history):
+		cmd_index= len(cmd_history)
+	elif cmd_index==len(cmd_history):
+		#reload latest typed
+		main_frame.entry.delete(0,END)
+		main_frame.entry.insert(0,temp_cmd)
+	else:
+		main_frame.entry.delete(0,END)
+		main_frame.entry.insert(0,cmd_history[cmd_index])
 
 
+def cmdLineHistoryUp(event):
+	global main_frame,cmd_history,cmd_index,temp_cmd
+	if len(cmd_history) == cmd_index:
+		temp_cmd = main_frame.entry.get()
+	cmd_index-=1
+	main_frame.entry.delete(0,END)
+	if cmd_index<0:
+		cmd_index= -1
+		#clear cmd line
+	else:
+		main_frame.entry.insert(0,cmd_history[cmd_index])
 
-if __name__ == "__main__":
-    local_vars={}
-    parseInput("none")
+
+#below callback functions define workflow of window updating
+#cmd line is the most important one
+
+#TODO: define commands that short-circuit parsing, like "Undo"
+
+def cmdLineCallback(event):
+	global tkWindow,main_frame
+	global cmd_history,cmd_index
+	cmd = main_frame.entry.get()
+	main_frame.entry.delete(0,END)
+	# command is now stored as string cmd
+	if(len(cmd)==0):
+		return
+	else:
+		# save it to the text box
+		main_frame.text.insert(END,'> '+cmd+'\n','usr')
+		cmd_history.append(cmd)
+		cmd_index = len(cmd_history)
+		#runMainParser(cmd)
+		output=runCodeParser(cmd)
+		if not output is None:
+			(out)=output
+			"""
+			if not (err is None or len(err)==0):
+				main_frame.text.insert(END,'x '+err+'\n','err')
+			"""
+			main_frame.text.insert(END,'< '+out+'\n','app')
+		try:
+			main_frame.text.see("end")
+		except:
+			main_frame.text.yview_pickplace("end")
+		main_frame.text.update()
+
+def setupWindow():
+	global tkWindow,main_frame
+	tkWindow = Tk()
+	tkWindow.title('Natural Language Drawing Application')
+	main_frame=MainFrame(tkWindow)
+	#main_frame now holds widgets for Canvas, Entry (aka cmd line), and Text (display)
+	g.canvas=main_frame.canvas
+
+	main_frame.focus_set()
+	main_frame.entry.focus_set() #set the focus to always be on the cmd line
+
+	#assign callback functions
+	main_frame.entry.bind('<Return>',cmdLineCallback)
+	main_frame.entry.bind('<Up>',cmdLineHistoryUp)
+	main_frame.entry.bind('<Down>',cmdLineHistoryDown)
+	#other callback functions will be for buttons and stuff not yet implemented
+
+def main():
+	global tkWindow
+	setupWindow() #initializes tkWindow and main_frame
+	tkWindow.mainloop()
+
+
+if __name__ == '__main__':
+    main()  

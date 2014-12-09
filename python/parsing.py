@@ -9,8 +9,7 @@ import graphics
 import random
 #from bash import bash
 import re
-shapes = graphics.database.mappings
-references = graphics.database.references
+shapes = graphics.database
 local_vars = {}
 class ParseError(Exception):
     def __init__(self, value):

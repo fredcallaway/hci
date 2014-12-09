@@ -14,7 +14,17 @@ def canvasWidth():
 def standardSizes():
     return [100.0,100.0]
 
-class Shape(dict):
+class Attributes(dict):
+    def __init__(self,*args,**kw):
+        super(Attributes,self).__init__(*args,**kw)
+        #define special fields
+        self.center=(0.0,0.0)
+        self.span=standardSizes()
+        self.idnum=None # tells us if the object has been drawn
+        self.isSet=False # object represents the set of all objects matching attrbutes
+        self.name=None
+        
+class Shape(Attributes):
     # FRED: i realized that this name is very unintuitive. i have
     #       changed it to Shape, which is what this object really is
     def __init__(self,*args,**kw):
@@ -189,7 +199,8 @@ def reprocessAttributes(shape):
         if pos is 'top':
             shape.center=(0,sh*0.25)
 """
-
+def drawAttributes(attr):
+    drawShape(attr)
 def drawShape(shape):
     sh=canvasHeight()
     hsh=sh/2
@@ -202,17 +213,17 @@ def drawShape(shape):
     if color is None:
         color='gray'
     if shape is 'oval':
-        attr.idnum=canvas.create_oval(bbox,fill=color,tag=attr.names)
+        attr.idnum=canvas.create_oval(bbox,fill=color,tag=shape.names)
     elif shape is 'circle':
         r=(w+h)/2
         attr.idnum=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attr.names)
     elif shape is 'rectangle':
-        attr.idnum=canvas.create_rectangle(bbox,fill=color,tag=attr.names)
+        attr.idnum=canvas.create_rectangle(bbox,fill=color,tag=shape.names)
     elif shape is 'square':
         r=(bbox[2]+bbox[3])/2
-        attr.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attr.names)
+        attr.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
     elif shape is 'triangle':
-        attr.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=attr.names)
+        attr.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=shape.names)
     else:
         return
     #now our shape has been drawn and assigned an idnum
