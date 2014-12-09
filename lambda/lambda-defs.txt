@@ -1,12 +1,11 @@
 HCI
 
 constants of type e : it them
-constant of type <et,e> : G
+constants of type t : that clear
+constants of type <e,e> : set
 variables of type e : a-o r-z
 variables of type t : p q
-variables of type <e,t> : P Q
-variables of type <e,et> : R
-#variables of type <et,t> : T
+variables of type <et> : P Q
 
 multiple letter identifiers
 
@@ -16,14 +15,15 @@ use rule predicate modification
 use rule lambda abstraction
 
 #Screen
-
-define screen: Lx[screen(x)]
+#define screen: Lx[screen(x)]
 
 #Shapes
 
 define circle: Lx[circle(x)]
 define square: Lx[square(x)]
 define triangle: Lx[triangle(x)]
+define oval: Lx[oval(x)]
+define rectangle: Lx[rectangle(x)]
 
 #Colors
 
@@ -36,58 +36,165 @@ define purple: Lx[purple(x)]
 define white: Lx[white(x)]
 define black: Lx[black(x)]
 
+#Screen Zones
+
+#'on-the-X-side-of-the-screen'
+#Ex: make1 a circle on the left side of the screen
+#Ex: make1 a circle on the right side of the screen
+define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
+define on-the-right-side-of-the-screen: Lx[screenRight(x)]
+
+#'at-the-X-of-the-screen'
+#Ex: make1 a circle at the top of the screen
+#Ex: make1 a circle at the bottom of the screen
+define at-the-top-of-the-screen: Lx[screenTop(x)]
+define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
+
+#Directional Movements
+
+#Ex: move it left/right
+#Ex: move it up/down
+define left: Lx[left(x)]
+define right: Lx[right(x)]
+define up: Lx[up(x)]
+define down: Lx[down(x)]
+
+#Relational Movements
+
+#Ex: move the circle to the left of the square
+#Ex: move the circle over the square
+define to-the-left-of: LyLx[leftOf(x,y)]
+define to-the-left-side-of: LyLx[leftOf(x,y)]
+define on-the-left-side-of: LyLx[leftOf(x,y)]
+define to-the-right-of: LyLx[rightOf(x,y)]
+define to-the-right-side-of: LyLx[rightOf(x,y)]
+define on-the-right-side-of: LyLx[rightOf(x,y)]
+define over: LyLx[over(x,y)]
+define on-top-of: LyLx[over(x,y)]
+define above: LyLx[over(x,y)]
+define under: LyLx[under(x,y)]
+define beneath: LyLx[under(x,y)]
+define below: LyLx[under(x,y)]
+define next-to: LyLx[nextTo(x,y)]
+define inside-of: LyLx[insideOf(x,y)]
+define in-the-middle-of: LyLx[insideOf(x,y)]
+
 #Actions
 
+#'draw' creates a new object and adds it to the on-screen list; 'draw' works with statements of type <e,t>
+#Ex: draw a square
 define draw: Lx[draw(x)]
 
-#make1 = draw; it creates a new object and puts it on the screen
+#'make1' = 'draw'
+#Ex: make1 a square
 define make1: Lx[draw(x)]
 
-#make2 modifies the parameters of an existing object on the screen
-define make2: LxLP[P(x)]
+#'make2' modifies the parameters of an existing object in the on-screen list; 'make2' works with statements of type <e>.
+#Definition of 'make2' where [.VP [.V make2] [.N it]] combines with [.A green].
+#define make2: LxLP[P(x)]
+#Definition of 'make2' where [.V make] combines with [.SC [.N it] [.A green]] and 'it green' is a small clause.
+define make2: Lp.p
 
-#delete moves an item from the on-screen list to the off-screen list
-define delete: LPLx[P(x) & hide(x)]
+#'delete'/'remove'/'erase' all move an item from the on-screen list to the off-screen list
+define delete: Lx[hide(x)]
+define remove: Lx[hide(x)]
+define erase: Lx[hide(x)]
+
+#'undo' reverts the world to the state it was in prior to the instruction stored in 'that'
+define undo: Lp[undo(p)]
+
+#'clear' removes all the items from the on-screen and off-screen lists and resets the program to its starting state
+define clear-the-screen: clear
+
+#'again' runs the instruction stored in 'that' again; 'again' should not update 'that'
+define again: Lp[again(p)]
+
+#'copy' = 'draw'
+define copy: Lx[draw(x)]
+
+#'move'/'put' applies a locational predicate to an entity
+define move: LxLP[P(x)]
+define put: LxLP[P(x)]
 
 #Function Words
 
 define a: LP[Gx(P(x))]
 define the: LP[Ix(P(x))]
 
-#'it' is the Python variable that contains the identity of the last updated element
+#'it' is the Python variable that contains the identity of the last updated object
 define it: it
-define that: it
+
+#'them' is the Python variable that contains the identity of the most recently updated objects
 define them: them
+
+#that: for use with undo and copy
+#Ex: 'undo that'
+define that: that
+
+#'another' is semantically equivalent in our world to 'a'
+#Ex: 'make1 another one1'
+define another: LP[Gx(P(x))]
 
 #one1: for use with make1
 #Ex: 'make1 a blue one' (of whatever shape was most recently made)
-
 #one1 is equal to the value of it.shape in Python 
 #it.shape is the shape parameter of the object currently stored in 'it'
 #it.shape(x) should operate like square(x) when it.shape = square
 #it.shape is represented here as it-shape due to LC syntax restrictions
-define one1: Lx[it-shape(x)]
+#Version of one1 that only preserves shape info in new object
+#Draw a big blue square. Make a red one. => A red square. (Not big.)
+#define one1: Lx[itShape(x)]
+#Version of one1 that preserves all unchanged parameters in new object
+#Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
+define one1: Lx[itParameters(x)]
 
-#one2, ones: for use with make2
-#Ex: 'make2 the blue one/ones green'
-
-#Current working definition for one2
+#one2: for use with make2
+#Ex: 'make2 the blue one green'
 define one2: LP.P
-#Actual set theoretic definition of one2 and ones; not currently playing nice with LC.
-#Set theory not going to work; need to define function that iterates through objects on screen
-#define one2, ones: LP{x | P(x)}
+
+#ones: for use with make2
+#Ex: 'make2 the blue ones green'
+#ones iterates over the predicate in P to determine all of the entities in the on-screen list that satisfy P
+define s: LPLx[P(set(x))]
+
+#An 'and' for all occasions
+define and-e: LxLy[x & y]
+define and-t: LpLq[p & q]
+define and-et: LPLQLx[P(x) & Q(x)]
+
+#Do Support
+#Ex: 'do that again'
+define do: Lp.p
+
+#Dummy function to extract 'result' for use with Plop
+define result: Lp[result(p)]
 
 exercise tree
 title TITLE
 directions DIRECTIONS
 
-#dummy function for plop
-define result: Lp.result(p)
-
 #Test Sentences
 
-#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N one2]]]] [.A green]]
-#[.VP [.V' [.V make2] [.NP it]] [.A green]]
-#[.VP [.V make1] [.DP [.D the] [.NP [.A blue] [.N one1]]]]
-#[.VP [.V make1] [.DP [.D a] [.NP [.A blue] [.N square]]]]
-#[.VP [.V' [.V make2] [.DP [.D the] [.NP [.A blue] [.N ones]]]] [.A green]]
+[.VP [.V draw] [.DP [.D a] [.NP [.A blue] [.N square]]]]
+[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
+[.VP [.V make1] [.NP [.A another] [.N one1]]]
+[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
+[.VP [.V make2] [.SC [.DP [.D the] [.N square]] [.A green]]]
+[.VP [.V make2] [.SC [.N it] [.A green]]]
+[.VP [.V make2] [.SC [.DP [.D the] [.NP [.A blue] [.N one2]]] [.A green]]]
+[.VP [.V make2] [.SC [.DP [.D the] [.AP [.A' [.A blue] [.N one2]] [.Plural s]]] [.A green]]]
+[.VP [.V make2] [.SC [.DP [.D the] [.NP [.N square] [.Plural s]]] [.A green]]]
+[.VP [.V delete] [.DP [.D the] [.N square]]]
+[.VP [.V delete] [.N it]]
+[.VP [.V undo] [.N that]]
+[.VP clear-the-screen]
+[.VP [.V' [.V do] [.N that]] [.A again]]
+[.VP [.V copy] [.DP [.D the] [.N square]]]
+[.VP [.V copy] [.N it]]
+[.VP [.V' [.V move] [.DP [.D the] [.N square]]] [.A left]]
+[.VP [.V' [.V move] [.NP it]] [.A left]]
+[.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
+[.VP [.V' [.V put] [.DP [.D the] [.N circle]]] [.AP [.A on-the-left-side-of] [.DP [.D the] [.N square]]]]
+
+# Broken?
+[.VP [.VP [.V make1][.NP [.D a][.N-bar [.N square]]]][.PP [.P and-e][.NP [.D a][.N-bar [.N triangle]]]]]
