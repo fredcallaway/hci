@@ -136,6 +136,7 @@ define put: LxLP[P(x)]
 #Function Words
 
 define a: LP[Gx(P(x))]
+define an: LP[Gx(P(x))]
 define the: LP[Ix(P(x))]
 
 #'it' is the Python variable that contains the identity of the last updated object
