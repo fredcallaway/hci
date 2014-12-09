@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/pythont.
 
 #This module contains the parsing functions
 # from Lambda Calculator to graphics calls
@@ -6,7 +6,7 @@
 # used by graphics
 
 import graphics
-from bash import bash
+#from bash import bash
 import re
 local_vars = {}
 shapes = []
@@ -17,15 +17,20 @@ class ParseError(Exception):
     def __str__(self):
         return repr(self.value)
 
+
+
+
+
+"""translates user input into (logical notation)
+    - parse works recursively, applying functions and operators
+    - variables in logical form are stored in local_vars
+        - these variables are tied to an attribute list
+        - a variable can represent an existing shape or a hypothetical shape
+"""
 def runMainParser(cmd):
     global local_vars
     local_vars={}
-    """translates user input into (logical notation)
-        - parse works recursively, applying functions and operators
-        - variables in logical form are stored in local_vars
-            - these variables are tied to an attribute list
-            - a variable can represent an existing shape or a hypothetical shape
-    """
+    
     # bitpar
     cmd=clean(cmd)
     cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
@@ -90,21 +95,21 @@ def parse(string):
         exec(fun+'(arg)')
 
 def draw(shape):
-    """creates a new shape"""
+    #creates a new shape
     print 'drawing: '+shape
     # graphics.drawAttributes(shape)
 
 def one1(shape):
-    """fills unspecified attributes of var with attributes of graphics.it"""
+    #fills unspecified attributes of var with attributes of graphics.it
     for attribute in it():
             graphics.updateAttributes(shape, graphics.it[attribute])
 
 def one2(shape):
-    """returns: most recently mentioned shape with properties in shape"""
+    #returns: most recently mentioned shape with properties in shape
     pass
 
 def gamma(var,string):
-    """returns: a new shape with attributes described in string"""
+    #returns: a new shape with attributes described in string
     global local_vars
     #create a new local variable
     #local variables are keys for local_vars
@@ -115,8 +120,8 @@ def gamma(var,string):
     return local_vars[var]
 
 def iota(var, string):
-    """returns: the unique shape matching attributes in string
-       throw error: "iota ambiguity" if there is not a unique shape"""
+    #returns: the unique shape matching attributes in string
+    #   throw error: "iota ambiguity" if there is not a unique shape
     global local_vars
     local_vars[var]=graphics.Attributes()
     for substring in string.split(" & "):
@@ -173,3 +178,4 @@ if __name__ == "__main__":
     # runMainParser("make a red triangle")
     # runMainParser("put the square next to the circle")
     runMainParser("make the red triangle")
+

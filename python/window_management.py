@@ -25,5 +25,6 @@ class MainFrame(Frame):
 
         self.text = ScrolledText.ScrolledText(self,bd=2,height=8,background='linen',undo=True)
         self.text.pack(fill=BOTH,expand=1)
-        text.tag_config("usr", foreground="black")
-        text.tag_config("app", foreground="dark blue")
+        self.text.tag_config("usr", foreground="black")
+        self.text.tag_config("app", foreground="dark green")
+        self.text.tag_config("err", foreground="red")

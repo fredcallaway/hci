@@ -1,16 +1,17 @@
 #!/usr/bin/python
 
 from Tkinter import *
-from window_management import MainFrame
 from copy import deepcopy
 
 #reference to the graphics canvas
 canvas = None
 def canvasHeight():
-    return canvas.winfo_screenheight()
+    global canvas
+    return canvas.winfo_height()
 #TODO check this works
 def canvasWidth():
-    return canvas.winfo_screenwidth()
+    global canvas
+    return canvas.winfo_width()
 ##TODO check this works
 def standardSizes():
     return [100.0,100.0]
@@ -139,26 +140,27 @@ class HistoryEntry:
             self.current = self.total-1
             return None
         return self.get()
-    def get():
+    def get(self):
         return self.history[self.current]
 
-class HistoryMap:
-    def __init__(self):
-        self.mappings={}
+class HistoryMap(dict):
+    def __init__(self,*args,**kw):
+        super(HistoryMap,self).__init__(*args,**kw)
+        #define special fields
         self.newestID = -1
-    def getNewID():
+    def getNewID(self):
         self.newestID += 1
         return self.newestID
     def add(self,attr):
         #entry = self.mappings.get(attr.idnum,None)
         #if entry == None:
-        self.mappings[getNewID()]=HistoryEntry(attr)
+        self[self.getNewID()]=HistoryEntry(attr)
         #else:
         #    entry.update(attr)
         return self.newestID
     def update(self,idnum,attr):
-        if idnum<=newestID:
-            self.mappings[idnum].update(attr)
+        if idnum<=self.newestID:
+            self[idnum].update(attr)
         else:
             return
     #below method is used to compare Attributes 
@@ -170,8 +172,9 @@ class HistoryMap:
     def findMatches(self,attr):
         aVals = attr.values()
         matches=[]
-        for (idnum,histEntry) in self.mappings.iteritems():
-            if all(map(lambda x: x in aVals, entry.get().values())):
+        for (idnum,histEntry) in self.iteritems():
+            entryVals=histEntry.get().values()
+            if all(map(lambda x: x is None or x in entryVals, aVals)):
                 matches.append((idnum,histEntry.get()))
         return matches
 
@@ -194,25 +197,27 @@ def reprocessAttributes(attr):
 
 def drawAttributes(attr):
     sh=canvasHeight()
-    shh=sh/2
-    swh=canvasWidth()/2
+    hsh=sh/2
+    hsw=canvasWidth()/2
     [cx,cy]=attr.center
     [w,h]=attr.span
-    loc=[(swh+cx)-w/2,sh-(shh+cy-w/2),w,h]
+    bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
     shape=attr['shape']
     color=attr['color']
+    if color is None:
+        color='gray'
     if shape is 'oval':
-        attr.idnum=canvas.create_oval(loc,fill=color,tag=attr.names)
+        attr.idnum=canvas.create_oval(bbox,fill=color,tag=attr.names)
     elif shape is 'circle':
-        r=(loc[2]+loc[3])/2
-        attr.idnum=canvas.craete_oval([loc[0],loc[1],r,r],fill=color,tag=attr.names)
+        r=(w+h)/2
+        attr.idnum=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attr.names)
     elif shape is 'rectangle':
-        attr.idnum=canvas.create_rectangle(loc,fill=color,tag=attr.names)
+        attr.idnum=canvas.create_rectangle(bbox,fill=color,tag=attr.names)
     elif shape is 'square':
-        r=(loc[2]+loc[3])/2
-        attr.idnum=canvas.create_rectangle([loc[0],loc[1],r,r],fill=color,tag=attr.names)
+        r=(bbox[2]+bbox[3])/2
+        attr.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attr.names)
     elif shape is 'triangle':
-        attr.idnum=canvas.create_polygon([loc[0],loc[1]+h,loc[0]+w,loc[1]+h,cx,loc[1]],fill=color,tag=attr.names)
+        attr.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=attr.names)
     else:
         return
     #now our shape has been drawn, and the attribute assigned an idnum
@@ -221,19 +226,18 @@ def drawAttributes(attr):
 
 #returns id of created history mapping
 def createDrawnAttributes(attr):
+    global it,datbase
     drawAttributes(attr)
     #this allows us to add it to the database
-    global it
-    global datbase
     it=database.add(attr)
     return it
 
 #note that these dont call update on canvas
 def hide(attrId):
-    global database
+    global database,canvas
     canvas.itemconfig(database[attrId].get().idnum, state=HIDDEN)
 def unhide(attrId):
-    global database
+    global database,canvas
     canvas.itemconfig(database[attrId].get().idnum, state=NORMAL)
 
 #updates Attributes with attrId
@@ -246,17 +250,23 @@ def updateDrawnAttributes(attrId, attr):
     it=attrId
     return it
 
-def undo(attrId=it):
-    global database
+def undo(attrId=None):
+    global database,canvas,it
+    if attrId is None and not it is None:
+        attrId=it
     if not attrId is None:
         hide(attrId)
         prev = database[attrId].undo()
         if not prev is None:
-            unhide(attrId)
-            #drawAttributes(prev)
+            if not database[attrId].deleted:
+                unhide(attrId)
+                #drawAttributes(prev)
+        canvas.update()
 
-def redo(attrId=it):
-    global database
+def redo(attrId=None):
+    global database,canvas,it
+    if attrId is None and not it is None:
+        attrId=it
     if not attrId is None:
         entry = database[attrId]
         if entry.deleted:
@@ -265,5 +275,6 @@ def redo(attrId=it):
             hide(attrId)
             entry.redo()
             unhide(attrId)
+        canvas.update()
         
 
