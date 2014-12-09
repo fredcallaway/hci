@@ -5,6 +5,22 @@
 # It imports attribute lists and graphics objects
 # used by graphics
 import sys
+import subprocess
+import StringIO
+import contextlib
+@contextlib.contextmanager
+def stdoutIO(stdout=None,stderr=None):
+    old = sys.stdout
+    olderr = sys.stderr
+    if stderr is None:
+        stderr = StringIO.StringIO()
+    if stdout is None:
+        stdout = StringIO.StringIO()
+    #sys.stderr = stderr
+    sys.stdout = stdout
+    yield (stdout)
+    sys.stderr = olderr
+    sys.stdout = old
 import graphics as g
 import random
 # from bash import bash
@@ -26,25 +42,31 @@ class ParseError(Exception):
 def runMainParser(cmd):
     global local_vars
     local_vars={}
-    bash=os.system
+    bash=subprocess.call
     # bitpar
-    cmd=clean(cmd)
-    cmd=str(bash("sh ../bitpar/parse '"+cmd+"'"))
+    cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
     cmd=label(cmd)
+    print 'cmd: '+cmd
 
+    print "update input.txt"
     # update input.txt
-    bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt")
-    bash("echo '"+cmd+"' >> ../lambda/input.txt")
+    bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
+    bash("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
 
+    print "lambda calc"
     # lambda calculator & plop
-    bash("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex")
-    bash("make -C ../lambda input.fml")
-    fml=`bash('cat ../lambda/input.fml')`
+    bash("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
+    bash("make -C ../lambda input.fml",shell=True)
+    with stdoutIO as io:
+        bash('cat ../lambda/input.fml',shell=True)
+    io.seek(0)
+    fml=io.read()
+    print "fml: "+fml
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-1]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print lambdaCalc_output
-    parse(lambdaCalc_output)
+    # parse(lambdaCalc_output)
 
 def clean(cmd):
     cmd = re.sub('next to', 'next-to', cmd)
