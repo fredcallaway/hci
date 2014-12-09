@@ -45,22 +45,18 @@ def runMainParser(cmd):
     bash=subprocess.call
     # bitpar
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
+    cmd = re.sub('\n','',cmd)
     cmd=label(cmd)
     print 'cmd: '+cmd
-
     print "update input.txt"
     # update input.txt
     bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
     bash("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
-
     print "lambda calc"
     # lambda calculator & plop
     bash("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
     bash("make -C ../lambda input.fml",shell=True)
-    with stdoutIO as io:
-        bash('cat ../lambda/input.fml',shell=True)
-    io.seek(0)
-    fml=io.read()
+    fml = subprocess.check_output('cat ../lambda/input.fml',shell=True)
     print "fml: "+fml
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-1]
