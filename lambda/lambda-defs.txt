@@ -41,14 +41,14 @@ define black: Lx[black(x)]
 #'on-the-X-side-of-the-screen'
 #Ex: make1 a circle on the left side of the screen
 #Ex: make1 a circle on the right side of the screen
-define on-the-left-side-of-the-screen: Lx[screen-left(x)]
-define on-the-right-side-of-the-screen: Lx[screen-right(x)]
+define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
+define on-the-right-side-of-the-screen: Lx[screenRight(x)]
 
 #'at-the-X-of-the-screen'
 #Ex: make1 a circle at the top of the screen
 #Ex: make1 a circle at the bottom of the screen
-define at-the-top-of-the-screen: Lx[screen-top(x)]
-define at-the-bottom-of-the-screen: Lx[screen-bottom(x)]
+define at-the-top-of-the-screen: Lx[screenTop(x)]
+define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
 
 #Directional Movements
 
