@@ -6,6 +6,7 @@
 # used by graphics
 
 import graphics
+import random
 #from bash import bash
 import re
 shapes = graphics.database
@@ -102,11 +103,10 @@ def draw(var):
 def hide(id):
     """hides the existing shape associated with id"""
     shape = getShape(id)
-    if True: #shape.idnum: # id refers to an existing shape
+    if True: #shape.shapeID: # id refers to an existing shape
         graphics.hide(shape)
     else: # id refers to hypothetical shape
         graphics.hide(pick(shape))
-        # TODO: implement pick()
     
 def itParamaters(id):
     """fills unspecified attributes of var with attributes of references[0]"""
@@ -120,7 +120,6 @@ def one2(id):
     shape=getShape(id)
     pass
 
-
 #OPERATORS:
 def gamma(var, string):
     """returns: var tied to a new shape with attributes described in string"""
@@ -133,7 +132,7 @@ def gamma(var, string):
     return var
 
 def iota(var, string):
-    """returns: idnum of the unique shape matching attributes in string
+    """returns: shapeID of the unique shape matching attributes in string
        throw error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
     local_vars[var]=graphics.Shape()
@@ -141,8 +140,8 @@ def iota(var, string):
         parse(substring)
     matches = graphics.database.findMatches(local_vars[var])
     if len(matches) != 1: raise ParseError('iota ambiguity')
-    idnum = matches[0]
-    return idnum
+    shapeID = matches[0]
+    return shapeID
 
 #COLORS:
 def red(id):
@@ -241,7 +240,7 @@ def triangle(id):
 
 #HELPERS:
 def getShape(id):
-    if type(id)==int: # idnum
+    if type(id)==int: # shapeID
         return shapes[id].get()
     elif type(id)==str and len(id)==1: # local var
         return local_vars[id]
