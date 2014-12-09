@@ -14,7 +14,30 @@ def canvasWidth():
 def standardSizes():
     return [100.0,100.0]
 
-        
+#contains the order of shapeID creations/updates
+class DrawOrder():
+    def __init__(self):
+        self.order=[]
+    #takes a shapeID
+    #update by adding a shapeID of the latest shape drawn
+    def add(self,shapeID):
+        self.order.append[shapeID]
+    # returns the latest shapeID in the list
+    def it(self):
+        if len(self.order)>0:
+            return self.order[len(self.order)-1]
+        else:
+            return None
+    #takes a list shapeIDs
+    #returns the latest shapeID in the order that is also in shapeIDs
+    def pickMostRecent(self,shapeIDList):
+        l = len(self.order)
+        i=l-1
+        while i>=0:
+            if self.order[i] in shapeIDList:
+                return self.order[i]
+        return None
+
 class AttributeList(dict):
     def __init__(self,*args,**kw):
         super(AttributeList,self).__init__(*args,**kw)
@@ -179,6 +202,7 @@ def reprocessAttributes(attList):
         if pos is 'top':
             attList.center=(0,sh*0.25)
 """
+referenceOrder = DrawOrder()
 def drawAttList(attList):
     sh=canvasHeight()
     hsh=sh/2
@@ -198,7 +222,7 @@ def drawAttList(attList):
     elif shape is 'rectangle':
         attList.imageID=canvas.create_rectangle(bbox,fill=color,tag=attList.names)
     elif shape is 'square':
-        r=(bbox[2]+bbox[3])/2
+        r=(w+h)/2
         attList.imageID=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
     elif shape is 'triangle':
         attList.imageID=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=attList.names)
@@ -214,6 +238,8 @@ def createShape(attList):
     drawAttList(attList)
     #this allows us to add it to the database
     it=database.add(attList)
+    global referenceOrder
+    referenceOrder.add(it)
     return it
 # attaches attList to shapeID history, draws new shape
 def updateShape(shapeID, attList):
@@ -221,6 +247,8 @@ def updateShape(shapeID, attList):
     hide(shapeID) #erases the previous image
     drawAttList(attList)
     database.update(shapeID,attList)
+    global referenceOrder
+    referenceOrder.add(shapeID)
 
 #note that these dont call update on canvas
 def hide(shapeID):

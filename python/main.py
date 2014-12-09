@@ -116,8 +116,8 @@ def cmdLineCallback(event):
 		main_frame.text.insert(END,'> '+cmd+'\n','usr')
 		cmd_history.append(cmd)
 		cmd_index = len(cmd_history)
-		# output=runMainParser(cmd)
-		output=runCodeParser(cmd)
+		output=runMainParser(cmd)
+		#output=runCodeParser(cmd)
 		if not output is None:
 			(out)=output
 			"""
