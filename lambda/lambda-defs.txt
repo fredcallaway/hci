@@ -143,10 +143,10 @@ define another: LP[Gx(P(x))]
 #it.shape is represented here as it-shape due to LC syntax restrictions
 #Version of one1 that only preserves shape info in new object
 #Draw a big blue square. Make a red one. => A red square. (Not big.)
-#define one1: Lx[it-shape(x)]
+#define one1: Lx[itShape(x)]
 #Version of one1 that preserves all unchanged parameters in new object
 #Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
-define one1: Lx[it-parameters(x)]
+define one1: Lx[itParameters(x)]
 
 #one2: for use with make2
 #Ex: 'make2 the blue one green'
@@ -195,3 +195,6 @@ directions DIRECTIONS
 [.VP [.V' [.V move] [.NP it]] [.A left]]
 [.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
 [.VP [.V' [.V put] [.DP [.D the] [.N circle]]] [.AP [.A on-the-left-side-of] [.DP [.D the] [.N square]]]]
+
+# Broken?
+[.VP [.VP [.V make1][.NP [.D a][.N-bar [.N square]]]][.PP [.P and-e][.NP [.D a][.N-bar [.N triangle]]]]]
