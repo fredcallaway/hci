@@ -14,17 +14,8 @@ def canvasWidth():
 def standardSizes():
     return [100.0,100.0]
 
-class Attributes(dict):
-    def __init__(self,*args,**kw):
-        super(Attributes,self).__init__(*args,**kw)
-        #define special fields
-        self.center=(0.0,0.0)
-        self.span=standardSizes()
-        self.idnum=None # tells us if the object has been drawn
-        self.isSet=False # object represents the set of all objects matching attrbutes
-        self.name=None
         
-class Shape(Attributes):
+class Shape(dict):
     # FRED: i realized that this name is very unintuitive. i have
     #       changed it to Shape, which is what this object really is
     def __init__(self,*args,**kw):
@@ -159,13 +150,13 @@ class HistoryMap(dict):
     def add(self,shape):
         #entry = self.mappings.get(shape.idnum,None)
         #if entry == None:
-        self[self.getNewID()]=HistoryEntry(attr)
+        self[self.getNewID()]=HistoryEntry(shape)
         #else:
         #    entry.update(shape)
         return self.newestID
-    def update(self,idnum,attr):
+    def update(self,idnum,shape):
         if idnum<=self.newestID:
-            self[idnum].update(attr)
+            self[idnum].update(shape)
         else:
             return
     #below method is used to compare Shape 
@@ -199,31 +190,32 @@ def reprocessAttributes(shape):
         if pos is 'top':
             shape.center=(0,sh*0.25)
 """
-def drawAttributes(attr):
-    drawShape(attr)
+def drawAttributes(shape):
+    drawShape(shape)
+
 def drawShape(shape):
     sh=canvasHeight()
     hsh=sh/2
     hsw=canvasWidth()/2
-    [cx,cy]=attr.center
-    [w,h]=attr.span
+    [cx,cy]=shape.center
+    [w,h]=shape.span
     bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
-    shape=attr['shape']
-    color=attr['color']
+    kind=shape['shape']
+    color=shape['color']
     if color is None:
         color='gray'
     if shape is 'oval':
-        attr.idnum=canvas.create_oval(bbox,fill=color,tag=shape.names)
+        shape.idnum=canvas.create_oval(bbox,fill=color,tag=shape.names)
     elif shape is 'circle':
         r=(w+h)/2
-        attr.idnum=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attr.names)
+        shape.idnum=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
     elif shape is 'rectangle':
-        attr.idnum=canvas.create_rectangle(bbox,fill=color,tag=shape.names)
+        shape.idnum=canvas.create_rectangle(bbox,fill=color,tag=shape.names)
     elif shape is 'square':
         r=(bbox[2]+bbox[3])/2
-        attr.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
+        shape.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
     elif shape is 'triangle':
-        attr.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=shape.names)
+        shape.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=shape.names)
     else:
         return
     #now our shape has been drawn and assigned an idnum
@@ -231,20 +223,20 @@ def drawShape(shape):
     canvas.update()
 
 #returns id of created history mapping
-def createDrawnAttributes(attr):
+def createDrawnAttributes(shape):
     global it,datbase
-    drawAttributes(attr)
+    drawAttributes(shape)
     #this allows us to add it to the database
-    it=database.add(attr)
+    it=database.add(shape)
     return it
 
 #note that these dont call update on canvas
-def hide(attrId):
+def hide(shapeID):
     global database,canvas
-    canvas.itemconfig(database[attrId].get().idnum, state=HIDDEN)
-def unhide(attrId):
+    canvas.itemconfig(database[shapeID].get().idnum, state=HIDDEN)
+def unhide(shapeID):
     global database,canvas
-    canvas.itemconfig(database[attrId].get().idnum, state=NORMAL)
+    canvas.itemconfig(database[shapeID].get().idnum, state=NORMAL)
 
 
 # attaches shape to idnum
@@ -254,29 +246,29 @@ def updateDrawnShape(idnum, shape):
     drawShape(shape)
     database.update(idnum)
 
-def undo(attrId=None):
+def undo(shapeID=None):
     global database,canvas,it
-    if attrId is None and not it is None:
-        attrId=it
-    if not attrId is None:
-        hide(attrId)
-        prev = database[attrId].undo()
+    if shapeID is None and not it is None:
+        shapeID=it
+    if not shapeID is None:
+        hide(shapeID)
+        prev = database[shapeID].undo()
         if not prev is None:
-            if not database[attrId].deleted:
-                unhide(attrId)
+            if not database[shapeID].deleted:
+                unhide(shapeID)
                 #drawAttributes(prev)
         canvas.update()
 
-def redo(attrId=None):
+def redo(shapeID=None):
     global database,canvas,it
-    if attrId is None and not it is None:
-        attrId=it
-    if not attrId is None:
-        entry = database[attrId]
+    if shapeID is None and not it is None:
+        shapeID=it
+    if not shapeID is None:
+        entry = database[shapeID]
         if entry.deleted:
             unhide(idnum)
         else:
             hide(idnum)
             entry.redo()
-            unhide(attrId)
+            unhide(shapeID)
         canvas.update()
