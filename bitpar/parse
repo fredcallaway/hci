@@ -5,7 +5,7 @@ cd bitpar
 PARSE=$1
 # make single words out of phrases
 
-PARSE=$(echo $PARSE | tr ' ' '\12'  |  bitpar -v -q hci.gram hci.lex) # parse
+PARSE=$(echo $PARSE | tr ' ' '\12'  |  ./bitpar -v -q hci.gram hci.lex) # parse
 PARSE=$(echo $PARSE | tr '()' '[]') # brackets
 
 echo $PARSE
