@@ -1,14 +1,26 @@
+1 .VP .V .DP
 1 .VP .V .NP
+1 .VP .V .N
 1 .VP .V .SC
-1 .VP .VP .PP
-
-1 .NP .D .N-bar
-1 .N-bar .N
-1 .N-bar .A .N-bar
-
-1 .PP .P .NP
-1 .PP .P .PP
-
-1 .AP .A
-
-1 .SC .NP .A
+1 .VP .V' .A
+1 .VP .V' .PP
+1 .VP .V' .DP
+1 .VP .VP
+1 .V' .V .DP
+1 .V' .V .NP
+1 .V' .V .N
+1 .DP .D .NP
+1 .DP .D .N
+1 .DP .D .nP
+1 .NP .A .N
+1 .NP .N .PP
+1 .nP .NP .Plural
+1 .SC .DP .DP
+1 .SC .DP .A
+1 .SC .N .A
+1 .PP .P .DP
+1 .PP .P .N
+1 .VP .VP .ConjP
+1 .V' .V .ConjP
+1 .ConjP .Conj .VP
+1 .ConjP .Conj .V
