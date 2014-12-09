@@ -22,6 +22,7 @@ class AttributeList(dict):
         self.center=(0.0,0.0)
         self.span=standardSizes()
         self.imageID=None # tells us if the object has been drawn
+        self.names=[]
 
 
 def relMove(attList,command):
@@ -87,7 +88,7 @@ def updateAttList(attList,command):
 
 #use this function when creating a new Attributes
 #ie make1
-def updateAttList(attList, command):
+def setAttList(attList, command):
     for i in range(len(attrTypes)):
         if command in attrNames[i]:
             attList[attrTypes[i]]=command
@@ -138,7 +139,7 @@ class HistoryMap(dict):
         self[self.getNewID()]=Shape(attList)
         return self.newestID
     def update(self,shapeID,attList):
-        if idnum<=self.newestID:
+        if shapeID<=self.newestID:
             self[shapeID].update(attList)
         else:
             return
@@ -151,10 +152,10 @@ class HistoryMap(dict):
     def findMatches(self,attList):
         aVals = attList.values()
         matches=[]
-        for (imageID,histEntry) in self.iteritems():
-            entryVals=histEntry.getAttList().values()
+        for (shapeID,shape) in self.iteritems():
+            entryVals=shape.getAttList().values()
             if all(map(lambda x: x is None or x in entryVals, aVals)):
-                matches.append((imageID,histEntry.getAttList()))
+                matches.append(shapeID)
         return matches
 
 
@@ -180,21 +181,21 @@ def drawAttList(attList):
     [cx,cy]=attList.center
     [w,h]=attList.span
     bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
-    kind=attList['attList']
+    shape=attList['kind']
     color=attList['color']
     if color is None:
         color='gray'
-    if attList is 'oval':
+    if shape is 'oval':
         attList.imageID=canvas.create_oval(bbox,fill=color,tag=attList.names)
-    elif attList is 'circle':
+    elif shape is 'circle':
         r=(w+h)/2
         attList.imageID=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
-    elif attList is 'rectangle':
+    elif shape is 'rectangle':
         attList.imageID=canvas.create_rectangle(bbox,fill=color,tag=attList.names)
-    elif attList is 'square':
+    elif shape is 'square':
         r=(bbox[2]+bbox[3])/2
         attList.imageID=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
-    elif attList is 'triangle':
+    elif shape is 'triangle':
         attList.imageID=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=attList.names)
     else:
         return
@@ -205,7 +206,7 @@ def drawAttList(attList):
 #returns id of created history mapping
 def createShape(attList):
     global it,datbase
-    drawAttributes(attList)
+    drawAttList(attList)
     #this allows us to add it to the database
     it=database.add(attList)
     return it
@@ -213,8 +214,8 @@ def createShape(attList):
 def updateShape(shapeID, attList):
     global database
     hide(shapeID) #erases the previous image
-    drawShape(attList)
-    database.update(shapeID)
+    drawAttList(attList)
+    database.update(shapeID,attList)
 
 #note that these dont call update on canvas
 def hide(shapeID):
