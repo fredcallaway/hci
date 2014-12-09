@@ -6,25 +6,8 @@
 # used by graphics
 import sys
 import subprocess
-import StringIO
-import contextlib
-@contextlib.contextmanager
-def stdoutIO(stdout=None,stderr=None):
-    old = sys.stdout
-    olderr = sys.stderr
-    if stderr is None:
-        stderr = StringIO.StringIO()
-    if stdout is None:
-        stdout = StringIO.StringIO()
-    #sys.stderr = stderr
-    sys.stdout = stdout
-    yield (stdout)
-    sys.stderr = olderr
-    sys.stdout = old
 import graphics as g
 import random
-# from bash import bash
-import os
 import re
 local_vars = {}
 
@@ -42,39 +25,37 @@ class ParseError(Exception):
 def runMainParser(cmd):
     global local_vars
     local_vars={}
-    bash=subprocess.call
+    cmd = clean(cmd)
     # bitpar
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
     cmd = re.sub('\n','',cmd)
-    cmd=label(cmd)
+    cmd = label(cmd)
     print 'cmd: '+cmd
     print "update input.txt"
     # update input.txt
-    bash("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
-    bash("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
+    subprocess.call("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
+    subprocess.call("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
     print "lambda calc"
     # lambda calculator & plop
-    bash("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
-    bash("make -C ../lambda input.fml",shell=True)
-    fml = subprocess.check_output('cat ../lambda/input.fml',shell=True)
+    subprocess.call("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
+    subprocess.call("make -C ../lambda input.fml",shell=True)
+    fml = subprocess.check_output('cat ../lambda/input.fml',shell=True)[:-1]
     print "fml: "+fml
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
-    lambdaCalc_output=fml.split('true ')[1][:-1]
+    lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print lambdaCalc_output
-    # parse(lambdaCalc_output)
+    parse(lambdaCalc_output)
 
 def clean(cmd):
     cmd = re.sub('next to', 'next-to', cmd)
     cmd = re.sub('on top of', 'on-top-of', cmd)
-    cmd = re.sub('to the left','to-the-left',cmd)
     cmd = re.sub('to the left of','to-the-left-of',cmd)
+    cmd = re.sub('to the left','to-the-left',cmd)
     cmd = re.sub('to the left side of','to-the-left-side-of',cmd)
-    cmd = re.sub('on the left side of','on-the-left-side-of',cmd)
-    cmd = re.sub('to the right','to-the-right',cmd)
     cmd = re.sub('to the right of','to-the-right-of',cmd)
+    cmd = re.sub('to the right','to-the-right',cmd)
     cmd = re.sub('to the right side of','to-the-right-side-of',cmd)
-    cmd = re.sub('on the right side of','on-the-right-side-of',cmd)
     cmd = re.sub('on top of','on-top-of',cmd)
     cmd = re.sub('next to','next-to',cmd)
     cmd = re.sub('inside of','inside-of',cmd)
@@ -84,7 +65,7 @@ def clean(cmd):
 
 def label(cmd):
     # see lambda-defs.txt for explanation of labels
-    cmd = cmd.replace('make][.NP', 'make1][.NP')
+    cmd = cmd.replace('make][.DP', 'make1][.NP')
     cmd = cmd.replace('make][.SC', 'make2][.SC')
     cmd = re.sub('(draw.*)one','\\1one1',cmd)
     cmd = re.sub('(make1.*)one','\\1one1',cmd)
@@ -103,7 +84,7 @@ def parse(string):
         print string
     elif string == 'it':
         # print 'it: ',references[0]
-        return references[0]
+        return g.it
 
     # operators
     elif string.find('\gamma') == 0:
@@ -145,13 +126,8 @@ def itParamaters(id):
 
 def one2(id):
     """returns: most recently mentioned shape with properties in shape"""
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'recently ')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'recently ')
+    pass
+
 
 #OPERATORS:
 def gamma(var, string):
