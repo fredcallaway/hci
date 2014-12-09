@@ -74,11 +74,12 @@ changeNames = (
     ('up','down','left','right'),
     ('taller','shorter','wider','narrower','larger','smaller')
 )
+"""
 relationTypes = ('relPosition')
 relationNames = (
     ('left','')
 )
-
+"""
 #use this when updating Attributes
 #ie make2
 def updateAttList(attList,command):
