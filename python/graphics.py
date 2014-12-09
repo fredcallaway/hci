@@ -15,40 +15,32 @@ def standardSizes():
     return [100.0,100.0]
 
         
-class Shape(dict):
-    # FRED: i realized that this name is very unintuitive. i have
-    #       changed it to Shape, which is what this object really is
+class AttributeList(dict):
     def __init__(self,*args,**kw):
-        super(Shape,self).__init__(*args,**kw)
+        super(AttributeList,self).__init__(*args,**kw)
         #define special fields
         self.center=(0.0,0.0)
         self.span=standardSizes()
-        self.idnum=None # tells us if the object has been drawn
-        self.isSet=False # object represents the set of all objects matching attrbutes
-        self.name=None
-        #FRED: - an object should only be allowed to have one name, shouldn't it?
-        #      - we should also prevent the user from assigning one name to two objects
-        #      - rather than viewing names as an attribute of an Attributes object, we
-        #        should make names a dict from names to Shape object.
+        self.imageID=None # tells us if the object has been drawn
 
 
-def relMove(shape,command):
-    [x,y]=shape.center
+def relMove(attList,command):
+    [x,y]=attList.center
     dh=canvasHeight() * 0.2
     dw=canvasWidth() * 0.2
     if command is 'up':
-        shape.center=[x,y+dh]
+        attList.center=[x,y+dh]
     elif command is 'down':
-        shape.center=[x,y-dh]
+        attList.center=[x,y-dh]
     elif command is 'left':
-        shape.center=[x-dw,y]
+        attList.center=[x-dw,y]
     elif command is 'right':
-        shape.center=[x+dw,y]
+        attList.center=[x+dw,y]
     else:
         return
 
-def relSize(shape,command):
-    [w,h] = shape.span
+def relSize(attList,command):
+    [w,h] = attList.span
     if command is 'taller':
         h *= 1.3
     elif command is 'shorter':
@@ -65,12 +57,7 @@ def relSize(shape,command):
         h /= 1.3
     else:
         return
-    shape.span=[w,h]
-
-names={} # names to idnums
-def addName(idnum,name):
-    database.mappings[idnum].name=name
-    names[name]=idnum
+    attList.span=[w,h]
 
 #constants for specifying attributes that are absolute, ie enumerated
 attrTypes = ('kind','size','positioning')
@@ -89,37 +76,37 @@ changeNames = (
 
 #use this when updating Attributes
 #ie make2
-def updateAttributes(shape,command):
+def updateAttList(attList,command):
     #check for relative changes
     for i in range(len(changeTypes)):
         if command in changeNames[i]:
-            changeTypes[i](shape,command)
+            changeTypes[i](attList,command)
             return
     #check for absolute changes
-    setAttributes(shape, command)
+    setAttributes(attList, command)
 
 #use this function when creating a new Attributes
 #ie make1
-def setAttributes(shape, command):
+def updateAttList(attList, command):
     for i in range(len(attrTypes)):
         if command in attrNames[i]:
-            shape[attrTypes[i]]=command
+            attList[attrTypes[i]]=command
             return
     #if the change name is not recognized, assume it's a color
     #this way we don't have to list every single color possible
-    shape['color']=command
+    attList['color']=command
 
 
 it = None
 
-class HistoryEntry:
-    def __init__(self,shape):
-        self.history = [deepcopy(shape)]
+class Shape:
+    def __init__(self,attList):
+        self.history = [deepcopy(attList)]
         self.current = 0
         self.total = 1
         self.deleted = False
-    def update(self,shape):
-        self.history.append(deepcopy(shape))
+    def update(self,attList):
+        self.history.append(deepcopy(attList))
         self.current += 1
         self.total = self.current+1 #erase Redos
     def undo(self):
@@ -128,15 +115,15 @@ class HistoryEntry:
             self.deleted = True
             self.current = 0
             return None
-        return self.get()
+        return self.getAttList()
     def redo(self):
         self.deleted = False
         self.current += 1
         if self.current >= self.total:
             self.current = self.total-1
             return None
-        return self.get()
-    def get(self):
+        return self.getAttList()
+    def getAttList(self):
         return self.history[self.current]
 
 class HistoryMap(dict):
@@ -147,104 +134,97 @@ class HistoryMap(dict):
     def getNewID(self):
         self.newestID += 1
         return self.newestID
-    def add(self,shape):
-        #entry = self.mappings.get(shape.idnum,None)
-        #if entry == None:
-        self[self.getNewID()]=HistoryEntry(shape)
-        #else:
-        #    entry.update(shape)
+    def add(self,attList):
+        self[self.getNewID()]=Shape(attList)
         return self.newestID
-    def update(self,idnum,shape):
+    def update(self,shapeID,attList):
         if idnum<=self.newestID:
-            self[idnum].update(shape)
+            self[shapeID].update(attList)
         else:
             return
-    #below method is used to compare Shape 
+    #below method is used to compare AttributeList 
     #return a list of all matches
     #note that None matches all
     #and locations and sizes are not compared
     #   (rely on wide, narrow descriptors instead)
     #return list of ids
-    def findMatches(self,shape):
-        aVals = shape.values()
+    def findMatches(self,attList):
+        aVals = attList.values()
         matches=[]
-        for (idnum,histEntry) in self.iteritems():
-            entryVals=histEntry.get().values()
+        for (imageID,histEntry) in self.iteritems():
+            entryVals=histEntry.getAttList().values()
             if all(map(lambda x: x is None or x in entryVals, aVals)):
-                matches.append((idnum,histEntry.get()))
+                matches.append((imageID,histEntry.getAttList()))
         return matches
 
 
 database = HistoryMap() #history of objects drawn and current objects
 
 """
-def reprocessAttributes(shape):
+def reprocessAttributes(attList):
     sh=canvasHeight()
     sw=canvasWidth()
-    dim = shape['size']
+    dim = attList['size']
     if dim != None:
         if dim is 'tall':
 
-    pos = shape['positioning']
+    pos = attList['positioning']
     if pos != None:
         if pos is 'top':
-            shape.center=(0,sh*0.25)
+            attList.center=(0,sh*0.25)
 """
-def drawAttributes(shape):
-    drawShape(shape)
-
-def drawShape(shape):
+def drawAttList(attList):
     sh=canvasHeight()
     hsh=sh/2
     hsw=canvasWidth()/2
-    [cx,cy]=shape.center
-    [w,h]=shape.span
+    [cx,cy]=attList.center
+    [w,h]=attList.span
     bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
-    kind=shape['shape']
-    color=shape['color']
+    kind=attList['attList']
+    color=attList['color']
     if color is None:
         color='gray'
-    if shape is 'oval':
-        shape.idnum=canvas.create_oval(bbox,fill=color,tag=shape.names)
-    elif shape is 'circle':
+    if attList is 'oval':
+        attList.imageID=canvas.create_oval(bbox,fill=color,tag=attList.names)
+    elif attList is 'circle':
         r=(w+h)/2
-        shape.idnum=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
-    elif shape is 'rectangle':
-        shape.idnum=canvas.create_rectangle(bbox,fill=color,tag=shape.names)
-    elif shape is 'square':
+        attList.imageID=canvas.craete_oval([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
+    elif attList is 'rectangle':
+        attList.imageID=canvas.create_rectangle(bbox,fill=color,tag=attList.names)
+    elif attList is 'square':
         r=(bbox[2]+bbox[3])/2
-        shape.idnum=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=shape.names)
-    elif shape is 'triangle':
-        shape.idnum=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=shape.names)
+        attList.imageID=canvas.create_rectangle([bbox[0],bbox[1],bbox[0]+r,bbox[1]+r],fill=color,tag=attList.names)
+    elif attList is 'triangle':
+        attList.imageID=canvas.create_polygon([bbox[0],bbox[3],bbox[2],bbox[3],hsw+cx,bbox[1]],fill=color,tag=attList.names)
     else:
         return
-    #now our shape has been drawn and assigned an idnum
+    #now our attList has been drawn and assigned an imageID
     #update our canvas
     canvas.update()
 
 #returns id of created history mapping
-def createDrawnAttributes(shape):
+def createShape(attList):
     global it,datbase
-    drawAttributes(shape)
+    drawAttributes(attList)
     #this allows us to add it to the database
-    it=database.add(shape)
+    it=database.add(attList)
     return it
+# attaches attList to shapeID history, draws new shape
+def updateShape(shapeID, attList):
+    global database
+    hide(shapeID) #erases the previous image
+    drawShape(attList)
+    database.update(shapeID)
 
 #note that these dont call update on canvas
 def hide(shapeID):
     global database,canvas
-    canvas.itemconfig(database[shapeID].get().idnum, state=HIDDEN)
+    canvas.itemconfig(database[shapeID].getAttList().imageID, state=HIDDEN)
 def unhide(shapeID):
     global database,canvas
-    canvas.itemconfig(database[shapeID].get().idnum, state=NORMAL)
+    canvas.itemconfig(database[shapeID].getAttList().imageID, state=NORMAL)
 
 
-# attaches shape to idnum
-def updateDrawnShape(idnum, shape):
-    global database
-    hide(idnum) #erases the previous image
-    drawShape(shape)
-    database.update(idnum)
 
 def undo(shapeID=None):
     global database,canvas,it
@@ -266,9 +246,9 @@ def redo(shapeID=None):
     if not shapeID is None:
         entry = database[shapeID]
         if entry.deleted:
-            unhide(idnum)
+            unhide(shapeID)
         else:
-            hide(idnum)
+            hide(shapeID)
             entry.redo()
             unhide(shapeID)
         canvas.update()
