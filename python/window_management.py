@@ -21,9 +21,9 @@ class MainFrame(Frame):
         #note that the below elements may end up being truncated off if there
         #is insufficient height for the window
         self.entry = Entry(self,bd=2,background='old lace')
-        self.entry.pack(fill=X,expand=1)
+        self.entry.pack(fill=X,expand=0)
 
-        self.text = ScrolledText.ScrolledText(self,bd=2,height=8,background='linen',undo=True)
+        self.text = ScrolledText.ScrolledText(self,bd=2,height=10,background='linen',undo=True)
         self.text.pack(fill=BOTH,expand=1)
         self.text.tag_config("usr", foreground="black")
         self.text.tag_config("app", foreground="dark green")

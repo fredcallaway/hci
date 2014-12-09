@@ -74,7 +74,12 @@ changeNames = (
     ('up','down','left','right'),
     ('taller','shorter','wider','narrower','larger','smaller')
 )
-
+"""
+relationTypes = ('relPosition')
+relationNames = (
+    ('left','')
+)
+"""
 #use this when updating Attributes
 #ie make2
 def updateAttList(attList,command):
@@ -150,11 +155,11 @@ class HistoryMap(dict):
     #   (rely on wide, narrow descriptors instead)
     #return list of ids
     def findMatches(self,attList):
-        aVals = attList.values()
+        searchVals = attList.values()
         matches=[]
         for (shapeID,shape) in self.iteritems():
-            entryVals=shape.getAttList().values()
-            if all(map(lambda x: x is None or x in entryVals, aVals)):
+            shapeVals=shape.getAttList().values()
+            if all(map(lambda x: x is None or x in shapeVals, searchVals)):
                 matches.append(shapeID)
         return matches
 
