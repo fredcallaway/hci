@@ -1,7 +1,10 @@
 HCI
 
-constants of type e : it them
-constants of type t : that clear
+#constants of type e : 1-100
+constants of type e : it
+constants of type e : them
+constants of type t : that
+constants of type t : clear
 constants of type <e,e> : set
 variables of type e : a-o r-z
 variables of type t : p q
@@ -35,6 +38,18 @@ define blue: Lx[blue(x)]
 define purple: Lx[purple(x)]
 define white: Lx[white(x)]
 define black: Lx[black(x)]
+
+#Sizes
+
+define big: Lx[big(x)]
+define bigger: Lx[big(x)]
+define enlarge: Lx[big(x)]
+define small: Lx[small(x)]
+define smaller: Lx[small(x)]
+define wide: Lx[wide(x)]
+define wider: Lx[wide(x)]
+define narrow: Lx[narrow(x)]
+define narrower: Lx[narrow(x)]
 
 #Screen Zones
 
@@ -158,7 +173,7 @@ define one2: LP.P
 define s: LPLx[P(set(x))]
 
 #An 'and' for all occasions
-define and-e: LxLy[x & y]
+#define and-e: LaLb[a & b]
 define and-t: LpLq[p & q]
 define and-et: LPLQLx[P(x) & Q(x)]
 
@@ -175,26 +190,30 @@ directions DIRECTIONS
 
 #Test Sentences
 
-[.VP [.V draw] [.DP [.D a] [.NP [.A blue] [.N square]]]]
-[.VP [.V make1] [.DP [.D a] [.NP [.A red] [.N one1]]]]
+[.VP [.V draw] [.NP [.D a] [.NP [.A blue] [.N square]]]]
+[.VP [.V draw] [.NP [.D a] [.NP [.A big] [.N square]]]]
+[.VP [.V draw] [.NP [.D a] [.NP [.A big] [.NP [.A blue] [.N square]]]]]
+[.VP [.V make1] [.NP [.D a] [.NP [.A red] [.N one1]]]]
 [.VP [.V make1] [.NP [.A another] [.N one1]]]
-[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
-[.VP [.V make2] [.SC [.DP [.D the] [.N square]] [.A green]]]
+[.VP [.V make1] [.NP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
+[.VP [.V make2] [.SC [.NP [.D the] [.N square]] [.A green]]]
 [.VP [.V make2] [.SC [.N it] [.A green]]]
-[.VP [.V make2] [.SC [.DP [.D the] [.NP [.A blue] [.N one2]]] [.A green]]]
-[.VP [.V make2] [.SC [.DP [.D the] [.AP [.A' [.A blue] [.N one2]] [.Plural s]]] [.A green]]]
-[.VP [.V make2] [.SC [.DP [.D the] [.NP [.N square] [.Plural s]]] [.A green]]]
-[.VP [.V delete] [.DP [.D the] [.N square]]]
+[.VP [.V make2] [.SC [.N it] [.A bigger]]]
+[.VP [.V make2] [.SC [.N them] [.A green]]]
+[.VP [.V make2] [.SC [.NP [.D the] [.NP [.A blue] [.N one2]]] [.A green]]]
+[.VP [.V make2] [.SC [.NP [.D the] [.AP [.A' [.A blue] [.N one2]] [.Plural s]]] [.A green]]]
+[.VP [.V make2] [.SC [.NP [.D the] [.NP [.N square] [.Plural s]]] [.A green]]]
+[.VP [.V delete] [.NP [.D the] [.N square]]]
 [.VP [.V delete] [.N it]]
 [.VP [.V undo] [.N that]]
 [.VP clear-the-screen]
 [.VP [.V' [.V do] [.N that]] [.A again]]
-[.VP [.V copy] [.DP [.D the] [.N square]]]
+[.VP [.V copy] [.NP [.D the] [.N square]]]
 [.VP [.V copy] [.N it]]
-[.VP [.V' [.V move] [.DP [.D the] [.N square]]] [.A left]]
+[.VP [.V' [.V move] [.NP [.D the] [.N square]]] [.A left]]
 [.VP [.V' [.V move] [.NP it]] [.A left]]
-[.VP [.V' [.V move] [.DP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.DP [.D the] [.N square]]]]
-[.VP [.V' [.V put] [.DP [.D the] [.N circle]]] [.AP [.A on-the-left-side-of] [.DP [.D the] [.N square]]]]
-
-# Broken?
-[.VP [.VP [.V make1][.NP [.D a][.N-bar [.N square]]]][.PP [.P and-e][.NP [.D a][.N-bar [.N triangle]]]]]
+[.VP [.V' [.V move] [.NP [.D the] [.N circle]]] [.AP [.A to-the-left-of] [.NP [.D the] [.N square]]]]
+[.VP [.V' [.V put] [.NP [.D the] [.N circle]]] [.AP [.A on-the-left-side-of] [.NP [.D the] [.N square]]]]
+[.VP [.V clear] [.ConjP [.Conj and-t] [.VP [.V undo] [.N that]]]]
+[.VP [.V' [.V draw] [.ConjP [.Conj and-et] [.V make1]]] [.NP [.D a] [.N square]]]
+#[.VP [.V make1][.NP [.N' [.D a] [.N square]] [.ConjP [.Conj and-e][.NP [.D a] [.N circle]]]]]
