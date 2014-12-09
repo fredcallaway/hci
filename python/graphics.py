@@ -205,8 +205,8 @@ def drawShape(shape):
     sh=canvasHeight()
     hsh=sh/2
     hsw=canvasWidth()/2
-    [cx,cy]=attr.center
-    [w,h]=attr.span
+    [cx,cy]=shape.center
+    [w,h]=shape.span
     bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
     shape=attr['shape']
     color=attr['color']
