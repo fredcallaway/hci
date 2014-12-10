@@ -287,3 +287,8 @@ def redo(shapeID=None):
             entry.redo()
             unhide(shapeID)
         canvas.update()
+
+#returns the attribute list of it
+def getIt():
+    global database,it
+    return database[it].getAttList()
