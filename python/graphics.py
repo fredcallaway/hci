@@ -74,10 +74,10 @@ def relSize(attList,command):
         w *= 1.3
     elif command is 'narrower':
         w /= 1.3
-    elif command is 'larger':
+    elif command is 'larger' or command is 'bigger':
         w *= 1.3
         h *= 1.3
-    elif command is 'smaller':
+    elif command is 'smaller' or command:
         w /= 1.3
         h /= 1.3
     else:
@@ -95,15 +95,58 @@ relationNames = (
 changeTypes = (relMove, relSize)
 changeNames = (
     ('up','down','left','right'),
-    ('taller','shorter','wider','narrower','larger','smaller')
+    ('taller','shorter','wider','narrower','larger','bigger','smaller')
 )
 #constants for specifying attributes that are absolute, ie enumerated
-attrTypes = ('kind','size','positioning')
+attrTypes = ('kind','size','positioning','color')
 attrNames = (
     ('oval','circle','rectangle','square','triangle'),
     ('tall','short','wide','narrow','large','small'),
-    ('top','bottom','left','right')
+    ('top','bottom','left','right'),
+    ('red','orange','yellow','green','blue','purple','white','black')
 )
+def kindHandler(attList,command):
+    attList['kind']=command
+def sizeHandler(attList,command):
+    [w,h] = attList.span
+    [lw,lh] = largeModel()
+    [sw,sh] = smallModel()
+    if command is None:
+        return
+    elif command is 'tall':
+        h=lh
+    elif command is 'short':
+        h=sh
+    elif command is 'wide':
+        w = lw
+    elif command is 'narrow':
+        w = sw
+    elif command is 'large':
+        w=lw
+        h=lh
+    elif command is 'small':
+        w=sw
+        h=sh 
+    attList.span=[w,h]
+def positioningHandler(attList,command):
+    [x,y]=attList.center
+    [ty,by]=verticalModel()
+    [lx,rx]=horizontalModel()
+    if command is None:
+        return
+    elif command is 'top':
+        y=ty
+    elif command is 'bottom':
+        y=by
+    elif command is 'left':
+        x=lx
+    elif command is 'right':
+        x=rh
+    attList.center=[x,y]
+def colorHandler(attList,command):
+    attList['color']=command
+attrHandlers = (kindHandler,sizeHandler,positioningHandler,colorHandler)
+
 #use this when updating Attributes
 #ie make2
 def updateAttList(attList,command):
@@ -120,11 +163,7 @@ def updateAttList(attList,command):
 def setAttList(attList, command):
     for i in range(len(attrTypes)):
         if command in attrNames[i]:
-            attList[attrTypes[i]]=command
-            return
-    #if the change name is not recognized, assume it's a color
-    #this way we don't have to list every single color possible
-    attList['color']=command
+            attrHandlers[i](attList,command)
 
 
 it = None
@@ -212,7 +251,7 @@ def drawAttList(attList):
     [w,h]=attList.span
     bbox=[hsw+cx-w/2,sh-(hsh+cy-h/2),hsw+cx+w/2,sh-(hsh+cy+h/2)]
     shape=attList['kind']
-    color=attList['color']
+    color=attList.get('color')
     if color is None:
         color='gray'
     if shape is 'oval':
