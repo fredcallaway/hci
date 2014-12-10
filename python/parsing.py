@@ -12,17 +12,22 @@ import re
 local_vars = {}
 
 class ParseError(Exception):
+    """an error that arises during parsing"""
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
-"""translates user input into (logical notation)
-    - parse works recursively, applying functions and operators
-    - variables in logical form are stored in local_vars
-        - these variables are tied to an attribute list
-        - a variable can represent an existing shape or a hypothetical shape"""
+class HypotheticalShape():
+    """represents a hypothetical shape created by gamma"""
+    def __init__(self,var):
+        assert type(var) is str
+        self.var = var
+    def getAttList(self):
+        return local_vars[self.var]
+
 def runMainParser(cmd):
+    """translates user input into logical notation"""
     global local_vars
     local_vars={}
     cmd = clean(cmd)
@@ -31,16 +36,13 @@ def runMainParser(cmd):
     cmd = re.sub('\n','',cmd)
     cmd = label(cmd)
     print 'cmd: '+cmd
-    print "update input.txt"
     # update input.txt
     subprocess.call("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
     subprocess.call("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
-    print "lambda calc"
     # lambda calculator & plop
     subprocess.call("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
     subprocess.call("make -C ../lambda input.fml",shell=True)
     fml = subprocess.check_output('cat ../lambda/input.fml',shell=True)[:-1]
-    print "fml: "+fml
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
@@ -48,6 +50,7 @@ def runMainParser(cmd):
     parse(lambdaCalc_output)
 
 def clean(cmd):
+    """returns cmd with phrase substitutions for easier parsing"""
     cmd = re.sub('next to', 'next-to', cmd)
     cmd = re.sub('on top of', 'on-top-of', cmd)
     cmd = re.sub('to the left of','to-the-left-of',cmd)
@@ -64,7 +67,9 @@ def clean(cmd):
     return cmd
 
 def label(cmd):
-    # see lambda-defs.txt for explanation of labels
+    """applies labels to differentiate synonyms
+
+    see lambda-defs.txt for explanation of labels"""
     cmd = cmd.replace('make][.DP', 'make1][.NP')
     cmd = cmd.replace('make][.SC', 'make2][.SC')
     cmd = re.sub('(draw.*)one','\\1one1',cmd)
@@ -75,6 +80,12 @@ def label(cmd):
 
 
 def parse(string):
+    """parses a string of logical notation, calling functions as necessary
+
+    - parse works recursively, applying functions and operators
+    - variables in logical form are stored in local_vars
+        - these variables are tied to an attributeList"""
+    
     global local_vars
     # print "parse("+string+")"
 
@@ -99,53 +110,54 @@ def parse(string):
         arg = parse(string.split( '(' , 1)[1][:-1])
         exec(fun+'(arg)')
 
-def draw(var):
-    """creates a new shape with attList associated with local var"""
-    attList=local_vars[var]
-    g.createShape(attList)
+###########
+#  WORDS  #
+###########
+
+#COMMANDS
+def draw(hyp):
+    """creates a new shape with hyp's attributes"""
+    print hyp.getAttList()
+    # g.createShape(hyp.getAttList())
 
 def hide(id):
     """hides the existing shape associated with id
-       note: id refers to either a shapeID or a local var"""
+
+       note: id refers to either a shapeID or a var"""
     if type(id) is int: # shapeID
         g.hide(g.database[id])
     else: # id refers to hypothetical shape
         shapeID=pickShape(local_vars[id])
         g.hide(g.database[shapeID])
     
-def itParamaters(id):
-    """fills unspecified attributes of var with attributes of references[0]"""
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'attributes ')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'attributes ')
-    for attribute in it:
-            g.updateAttList(shape, it[attribute])
+def itParamaters(var):
+    """fills unspecified attributes of var with attributes of most recently mentioned shape"""
+    varAttList = local_vars[var]
+    itAttList = graphics.it.getAttList()
+    local_vars[var] = dict(itAttList.items() + varAttList.items())
 
 def one2(var):
     """returns: most recently mentioned shape with properties in shape"""
     options = g.findMatches(local_vars[var])
     g.referenceOrder.pickMostRecent(options)
-    pass
-
 
 #OPERATORS:
 def gamma(var, string):
-    """returns: var tied to a new shape with attributes described in string"""
+    """returns: a HypotheticalShape with attributes described in string"""
     global local_vars
-    #create a new local variable
+    # create a new local variable tied to an attList
     local_vars[var]=g.AttributeList()
-    #apply functions to new local variable, updating its attibute list
+    # attach this attList to a hypothetical shape
+    hyp = HypotheticalShape(var)
+    # apply functions to the attList, defining the hypothetical shape
     for substring in string.split(" & "):
         parse(substring)
-    return var
+    return hyp
 
 def iota(var, string):
     """returns: shapeID of the unique shape matching attributes in string
-       throw error: "iota ambiguity" if there is not a unique shape"""
+
+       throws error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
     local_vars[var]=g.AttributeList()
     for substring in string.split(" & "):
