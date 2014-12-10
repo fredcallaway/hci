@@ -13,6 +13,19 @@ def canvasWidth():
     return canvas.winfo_width()
 def standardSizes():
     return [100.0,100.0]
+def verticalModel():
+    h=canvasHeight()
+    return [h/2,-h/2]
+def horizontalModel():
+    w=canvasWidth()
+    return [w/2,-w/2]
+def largeModel():
+    [w,h]=standardSizes()
+    return [w*3,h*3]
+def smallModel():
+    [w,h]=standardSizes()
+    return [w/3,h/3]
+
 
 #contains the order of shapeID creations/updates
 class DrawOrder():
