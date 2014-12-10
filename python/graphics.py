@@ -21,7 +21,7 @@ class DrawOrder():
     #takes a shapeID
     #update by adding a shapeID of the latest shape drawn
     def add(self,shapeID):
-        self.order.append[shapeID]
+        self.order.append(shapeID)
     # returns the latest shapeID in the list
     def it(self):
         if len(self.order)>0:
@@ -36,6 +36,7 @@ class DrawOrder():
         while i>=0:
             if self.order[i] in shapeIDList:
                 return self.order[i]
+            i-=1
         return None
 
 class AttributeList(dict):
@@ -83,13 +84,12 @@ def relSize(attList,command):
         return
     attList.span=[w,h]
 
-#constants for specifying attributes that are absolute, ie enumerated
-attrTypes = ('kind','size','positioning')
-attrNames = (
-    ('oval','circle','rectangle','square','triangle'),
-    ('tall','short','wide','narrow','large','small'),
-    ('top','bottom','left','right')
+"""
+relationTypes = ('relPosition')
+relationNames = (
+    ('leftOf','')
 )
+"""
 #note that color is a catch-all type for names that don't match the above lists
 #constants for changing, relative absolutes
 changeTypes = (relMove, relSize)
@@ -97,12 +97,13 @@ changeNames = (
     ('up','down','left','right'),
     ('taller','shorter','wider','narrower','larger','smaller')
 )
-"""
-relationTypes = ('relPosition')
-relationNames = (
-    ('left','')
+#constants for specifying attributes that are absolute, ie enumerated
+attrTypes = ('kind','size','positioning')
+attrNames = (
+    ('oval','circle','rectangle','square','triangle'),
+    ('tall','short','wide','narrow','large','small'),
+    ('top','bottom','left','right')
 )
-"""
 #use this when updating Attributes
 #ie make2
 def updateAttList(attList,command):
@@ -286,3 +287,8 @@ def redo(shapeID=None):
             entry.redo()
             unhide(shapeID)
         canvas.update()
+
+#returns the attribute list of it
+def getIt():
+    global database,it
+    return database[it].getAttList()

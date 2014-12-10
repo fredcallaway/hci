@@ -4,31 +4,13 @@
 from Tkinter import *
 from window_management import MainFrame
 from parsing import runMainParser
-import sys
-import StringIO
-import contextlib
-@contextlib.contextmanager
-def stdoutIO(stdout=None,stderr=None):
-    old = sys.stdout
-    olderr = sys.stderr
-    if stderr is None:
-        stderr = StringIO.StringIO()
-    if stdout is None:
-        stdout = StringIO.StringIO()
-    #sys.stderr = stderr
-    sys.stdout = stdout
-    yield (stdout)
-    sys.stderr = olderr
-    sys.stdout = old
+
+from common import stdoutIO
 
 import graphics as g
 gns = {}
 lns = {}
 ns={}
-def updateNS():
-    global ns
-    ns.update(globals())
-    ns.update(locals())
 def foo():
     global alst
     alst=g.AttributeList()
@@ -37,29 +19,31 @@ def foo():
     g.setAttList(alst,'green')
     g.createShape(alst)
 def runCodeParser(cmd):
-    global ns
+    global ns,gns,lns
     code=compile(cmd,'<string>','exec')
     with stdoutIO() as (out):
         #ns['it']=g.it
-        ns.update(globals())
-        ns.update(locals())
-        exec cmd in ns
+        gns.update(globals())
+        lns.update(locals())
+        exec cmd in gns,lns
     out.seek(0)
     cont = out.read()
     out.close()
     lc=len(cont)
-    """
-    err.seek(0)
-    e=err.read()
-    err.close()
-    le=len(e)
-    if le>0 and e[le-1]=='\n':
-        e=e[0:(le-1)]
-    """
+    
+    # err.seek(0)
+    # e=err.read()
+    # err.close()
+    # le=len(e)
+
+    # if le>0 and e[le-1]=='\n':
+    #     e=e[0:(le-1)]
+	
     if lc>0 and cont[lc-1]=='\n':
         cont=cont[0:(lc-1)]
+
     if lc>0:# or le>0:
-        return (cont)
+        return (cont)#,e)
     else:
         return None
 
@@ -116,15 +100,19 @@ def cmdLineCallback(event):
 		main_frame.text.insert(END,'> '+cmd+'\n','usr')
 		cmd_history.append(cmd)
 		cmd_index = len(cmd_history)
-		output=runMainParser(cmd)
-		#output=runCodeParser(cmd)
-		if not output is None:
-			(out)=output
-			"""
-			if not (err is None or len(err)==0):
-				main_frame.text.insert(END,'x '+err+'\n','err')
-			"""
-			main_frame.text.insert(END,'< '+out+'\n','app')
+		#-----
+		#Run the Parser
+		response=runMainParser(cmd)
+		#response=runCodeParser(cmd)
+		#-----
+		#Handle output
+		if not response is None:
+			(out)=response
+			if not (out is None):
+				main_frame.text.insert(END,'< '+out+'\n','app')
+			
+			# if not (err is None or len(err)==0):
+			# 	main_frame.text.insert(END,'x '+err+'\n','err')
 		try:
 			main_frame.text.see("end")
 		except:

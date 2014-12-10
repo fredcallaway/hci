@@ -95,7 +95,7 @@ def parse(string):
         print string
     elif string == 'it':
         # print 'it: ',references[0]
-        return g.it
+        return g.it()
 
     # operators
     elif string.find('\gamma') == 0:
@@ -117,6 +117,8 @@ def parse(string):
 #COMMANDS
 def draw(hyp):
     """creates a new shape with hyp's attributes"""
+    print 'g.createShape(',hyp.getAttList(),')'
+    print type(hyp.getAttList())
     g.createShape(hyp.getAttList())
 
 def hide(id):
@@ -132,7 +134,7 @@ def hide(id):
 def itParamaters(var):
     """fills unspecified attributes of var with attributes of most recently mentioned shape"""
     varAttList = local_vars[var]
-    itAttList = graphics.it.getAttList()
+    itAttList = g.getIt()
     local_vars[var] = dict(itAttList.items() + varAttList.items())
 
 def one2(var):
@@ -208,26 +210,26 @@ def up(id):
 def down(id):
     applyPredicate(id,'down')
 
-def leftOf(id1,id2):
-    shape1=getShape(id1)
-    shape2=getShape(id2)
-    # uncertain values are functions that return True if given a value that matches the requirement
-    # TODO: combine functions for "to the left of the triangle and above the square"
-    loc= lambda (x,y): x < shape2['center'] - (shape2['span'][0]/2 + shape1['span'][0]/2)
-def rightOf(id1,id2):
-    shape1=getShape(id1)
-    shape2=getShape(id2)
-    loc= lambda (x,y): x > shape2['center'] + (shape2['span'][0]/2 + shape1['span'][0]/2)
-def below(id1,id2):
-    shape1=getShape(id1)
-    shape2=getShape(id2)
-    loc= lambda (x,y): x < shape2['center'] - (shape2['span'][1]/2 + shape1['span'][1]/2)
-def over(id1,id2):
-    shape1=getShape(id1)
-    shape2=getShape(id2)
-    loc= lambda (x,y): y > shape2['center'] + (shape2['span'][1]/2 + shape1['span'][1]/2)
-def insideOf(id1,id2):
-    pass
+# def leftOf(id1,id2):
+#     shape1=getShape(id1)
+#     shape2=getShape(id2)
+#     # uncertain values are functions that return True if given a value that matches the requirement
+#     # TODO: combine functions for "to the left of the triangle and above the square"
+#     loc= lambda (x,y): x < shape2['center'] - (shape2['span'][0]/2 + shape1['span'][0]/2)
+# def rightOf(id1,id2):
+#     shape1=getShape(id1)
+#     shape2=getShape(id2)
+#     loc= lambda (x,y): x > shape2['center'] + (shape2['span'][0]/2 + shape1['span'][0]/2)
+# def below(id1,id2):
+#     shape1=getShape(id1)
+#     shape2=getShape(id2)
+#     loc= lambda (x,y): x < shape2['center'] - (shape2['span'][1]/2 + shape1['span'][1]/2)
+# def over(id1,id2):
+#     shape1=getShape(id1)
+#     shape2=getShape(id2)
+#     loc= lambda (x,y): y > shape2['center'] + (shape2['span'][1]/2 + shape1['span'][1]/2)
+# def insideOf(id1,id2):
+#     pass
 
 #KINDS:
 def circle(id):
@@ -269,11 +271,11 @@ def applyPredicate(id,cmd):
     elif type(id) is HypotheticalShape:
         attList = id.getAttList()
         shapeID=pickShape(attList)
-        g.updateShape(id,attList)
+        g.updateShape(shapeID,attList)
 
     else: # local var
         attList = local_vars[id]
-        g.updateAttList(attList, 'red')
+        g.updateAttList(attList, cmd)
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
