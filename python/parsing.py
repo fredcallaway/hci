@@ -35,7 +35,7 @@ def runMainParser(cmd):
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
     cmd = re.sub('\n','',cmd)
     cmd = label(cmd)
-    print 'cmd: '+cmd
+    print 'syntax: '+cmd
     # update input.txt
     subprocess.call("cp ../lambda/lambda-defs.txt ../lambda/input.txt",shell=True)
     subprocess.call("echo '"+cmd+"' >> ../lambda/input.txt",shell=True)
@@ -46,7 +46,7 @@ def runMainParser(cmd):
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
-    print lambdaCalc_output
+    print 'logic: '+lambdaCalc_output
     parse(lambdaCalc_output)
 
 def clean(cmd):
@@ -117,8 +117,7 @@ def parse(string):
 #COMMANDS
 def draw(hyp):
     """creates a new shape with hyp's attributes"""
-    print hyp.getAttList()
-    # g.createShape(hyp.getAttList())
+    g.createShape(hyp.getAttList())
 
 def hide(id):
     """hides the existing shape associated with id
@@ -139,7 +138,7 @@ def itParamaters(var):
 def one2(var):
     """returns: most recently mentioned shape with properties in shape"""
     options = g.findMatches(local_vars[var])
-    g.referenceOrder.pickMostRecent(options)
+    return g.referenceOrder.pickMostRecent(options)
 
 #OPERATORS:
 def gamma(var, string):
@@ -169,153 +168,45 @@ def iota(var, string):
 
 #COLORS:
 def red(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'red')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'red')
+    applyPredicate(id,'red')
 def orange(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'orange')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'orange')
+    applyPredicate(id,'orange')
 def yellow(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'yellow')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'yellow')
+    applyPredicate(id,'yellow')
 def green(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'green')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'green')
+    applyPredicate(id,'green')
 def blue(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'blue')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'blue')
+    applyPredicate(id,'blue')
 def purple(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'purple')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'purple')
+    applyPredicate(id,'purple')
 def white(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'white')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'white')
+    applyPredicate(id,'white')
 def black(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'black')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'black')
+    applyPredicate(id,'black')
 
 #SIZES:
 def tall(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'tall')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'tall')
+    applyPredicate(id,'tall')
 def short(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'short')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'short')
+    applyPredicate(id,'short')
 def wide(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'wide')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'wide')
+    applyPredicate(id,'wide')
 def narrow(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'narrow')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'narrow')
+    applyPredicate(id,'narrow')
 def big(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'large')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'large')
+    applyPredicate(id,'big')
 def small(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'small')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'small')
+    applyPredicate(id,'small')
 
 #LOCATIONS:
 def left(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'left')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'left')
+    applyPredicate(id,'left')
 def right(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'right')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'right')
+    applyPredicate(id,'right')
 def up(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'up')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'up')
+    applyPredicate(id,'up')
 def down(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'down')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'down')
+    applyPredicate(id,'down')
 
 def leftOf(id1,id2):
     shape1=getShape(id1)
@@ -340,29 +231,11 @@ def insideOf(id1,id2):
 
 #KINDS:
 def circle(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'circle')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'circle')
+    applyPredicate(id,'circle')
 def square(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'square')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'square')
+    applyPredicate(id,'square')
 def triangle(id):
-    if type(id) is int: # shapeID
-        attList = g.database[id].getAttList()
-        g.updateAttList(attList, 'triangle')
-        g.updateShape(id,attList)
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, 'triangle')
+    applyPredicate(id,'triangle')
     
 
 #HELPERS:
@@ -379,6 +252,28 @@ def pickShape(attList):
     options = g.findMatches(attList)
     return random.choice(options)
     
+def applyPredicate(id,cmd):
+    """applies a predicate to object represented by id
+
+    performs an action depending on type of id:
+        - shapeID: updates associated shape with cmd
+        - HypotheticalShape: picks a random matching shape
+          and updates it with cmd
+        - var: updates attList associated with var"""
+
+    if type(id) is int: # shapeID
+        attList = g.database[id].getAttList()
+        g.updateAttList(attList, cmd)
+        g.updateShape(id,attList)
+
+    elif type(id) is HypotheticalShape:
+        attList = id.getAttList()
+        shapeID=pickShape(attList)
+        g.updateShape(id,attList)
+
+    else: # local var
+        attList = local_vars[id]
+        g.updateAttList(attList, 'red')
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
