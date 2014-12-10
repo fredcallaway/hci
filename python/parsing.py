@@ -95,7 +95,7 @@ def parse(string):
         print string
     elif string == 'it':
         # print 'it: ',references[0]
-        return g.referenceOrder.it().getAttList()
+        return g.it()
 
     # operators
     elif string.find('\gamma') == 0:
@@ -134,7 +134,7 @@ def hide(id):
 def itParamaters(var):
     """fills unspecified attributes of var with attributes of most recently mentioned shape"""
     varAttList = local_vars[var]
-    itAttList = g.referenceOrder.it().getAttList()
+    itAttList = g.getIt()
     local_vars[var] = dict(itAttList.items() + varAttList.items())
 
 def one2(var):
