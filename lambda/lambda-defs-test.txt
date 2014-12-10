@@ -48,10 +48,8 @@ define small: Lx[small(x)]
 define smaller: Lx[small(x)]
 define wide: Lx[wide(x)]
 define wider: Lx[wide(x)]
-define tall: Lx[tall(x)]
-define taller: Lx[tall(x)]
-define short: Lx[short(x)]
-define shorter: Lx[short(x)]
+define narrow: Lx[narrow(x)]
+define narrower: Lx[narrow(x)]
 
 #Screen Zones
 
@@ -193,3 +191,4 @@ exercise tree
 title TITLE
 directions DIRECTIONS
 
+[.VP [.V make][.SC [.DP [.NP [.N it]]][.Adj bigger]]]
