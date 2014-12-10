@@ -100,12 +100,13 @@ def parse(string):
         exec(fun+'(arg)')
 
 def draw(var):
-    """creates a new shape with attList associated with var"""
+    """creates a new shape with attList associated with local var"""
     attList=local_vars[var]
     g.createShape(attList)
 
 def hide(id):
-    """hides the existing shape associated with id"""
+    """hides the existing shape associated with id
+       note: id refers to either a shapeID or a local var"""
     if type(id) is int: # shapeID
         g.hide(g.database[id])
     else: # id refers to hypothetical shape
@@ -124,8 +125,10 @@ def itParamaters(id):
     for attribute in it:
             g.updateAttList(shape, it[attribute])
 
-def one2(id):
+def one2(var):
     """returns: most recently mentioned shape with properties in shape"""
+    options = g.findMatches(local_vars[var])
+    g.referenceOrder.pickMostRecent(options)
     pass
 
 
