@@ -41,31 +41,39 @@ define black: Lx[black(x)]
 
 #Sizes
 
-define big: Lx[big(x)]
-define bigger: Lx[big(x)]
-define enlarge: Lx[big(x)]
+define big: Lx[large(x)]
+define large: Lx[large(x)]
 define small: Lx[small(x)]
-define smaller: Lx[small(x)]
 define wide: Lx[wide(x)]
-define wider: Lx[wide(x)]
+define narrow: Lx[narrow(x)]
 define tall: Lx[tall(x)]
-define taller: Lx[tall(x)]
 define short: Lx[short(x)]
-define shorter: Lx[short(x)]
+
+define bigger: Lx[larger(x)]
+define larger: Lx[larger(x)]
+define enlarge: Lx[larger(x)]
+define smaller: Lx[smaller(x)]
+define wider: Lx[wider(x)]
+define narrower: Lx[narrower(x)]
+define taller: Lx[taller(x)]
+define shorter: Lx[shorter(x)]
 
 #Screen Zones
 
 #'on-the-X-side-of-the-screen'
 #Ex: make1 a circle on the left side of the screen
 #Ex: make1 a circle on the right side of the screen
+#Note: screen\Left must be written with escape character so that capital L isn't treated as a lambda
 define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
 define on-the-right-side-of-the-screen: Lx[screenRight(x)]
 
-#'at-the-X-of-the-screen'
+#'at-the-X-of-the-screen' & 'on-the-X-of-the-screen'
 #Ex: make1 a circle at the top of the screen
 #Ex: make1 a circle at the bottom of the screen
 define at-the-top-of-the-screen: Lx[screenTop(x)]
+define on-the-top-of-the-screen: Lx[screenTop(x)]
 define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
+define on-the-bottom-of-the-screen: Lx[screenBottom(x)]
 
 #Directional Movements
 
