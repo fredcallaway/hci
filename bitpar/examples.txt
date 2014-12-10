@@ -4,20 +4,59 @@ echo '"draw a red square"' | tr ' ' '\12' | bitpar -v -q hci.gram hci.lex  | tr 
 parentheses are translated into brackets so the parses can be read by http://mshang.ca/syntree/
 you can also view a tree of any parse with: sh tree 'draw a red square'
 
-"draw a red square"
-[VP [V draw][NP [D a][N-bar [A red][N square]]]]
-"draw a triangle"
-[VP [V draw][NP [D a][N-bar [N triangle]]]]
-"make the circle blue"
-[VP [V make][NP [D the][N-bar [N circle]]][A blue]] #note tribranching structure
-"make a triangle under the square"
-[VP [V make][NP [D a][N-bar [N triangle]]][PP [P under][NP [D the][N-bar [N square]]]]] #again, tribranching
-"make a square next to the circle"
-[VP [V make][NP [D a][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]
-"move the square next to the circle"
-[VP [V move][NP [D the][N-bar [N square]]][PP [P next][PP [P to][NP [D the][N-bar [N circle]]]]]]
+=====
+The following sentences are for testing bitpar.
 
-----
-
-[.VP [.V make-2][.SC [.NP [.D the][.N-bar [.A square][.N-bar [.A next-to][.N-bar [.A the][.N-bar [.N triangle]]]]]][.A blue]]]
-[.VP [.VP [.V make-1][.NP [.D a][.N-bar [.N square]]]][.PP [.P next-to][.NP [.D the][.N-bar [.A blue][.N-bar [.N triangle]]]]]]
+#Test Sentences
+#draw a blue square
+#[.VP [.V draw] [.DP [.D a] [.NP [.Adj blue] [.N square]]]]
+#draw a big square
+#[.VP [.V draw] [.DP [.D a] [.NP [.Adj big] [.N square]]]]
+#draw a big blue square
+#[.VP [.V draw] [.DP [.D a] [.NP [.Adj big] [.NP [.Adj blue] [.N square]]]]]
+#make a red one
+#[.VP [.V make1] [.DP [.D a] [.NP [.Adj red] [.N one1]]]]
+#make another one
+#[.VP [.V make1] [.DP [.NP [.Adj another] [.N one1]]]]
+#make a circle on the left side of the screen
+#[.VP [.V make1] [.DP [.D a] [.NP [.N circle] [.PP on-the-left-side-of-the-screen]]]]
+#make the square green
+#[.VP [.V make2] [.SC [.DP [.D the] [.NP [.N square]]] [.Adj green]]]
+#make it green
+#[.VP [.V make2] [.SC [.DP [.NP [.N it]]] [.Adj green]]]
+#make it bigger
+#[.VP [.V make2] [.SC [.DP [.NP [.N it]]] [.Adj bigger]]]
+#make them green
+#[.VP [.V make2] [.SC [.DP [.NP [.N them]]] [.Adj green]]]
+#make the blue one green
+#[.VP [.V make2] [.SC [.DP [.D the] [.NP [.Adj blue] [.N one2]]] [.Adj green]]]
+#make the blue one s green
+#[.VP [.V make2] [.SC [.DP [.D the] [.nP [.NP [.Adj blue] [.N one2]] [.Plural s]]] [.Adj green]]]
+#make the square s green
+#[.VP [.V make2] [.SC [.DP [.D the] [.nP [.NP [.N square]] [.Plural s]]] [.Adj green]]]
+#delete the square
+#[.VP [.V delete] [.DP [.D the] [.NP [.N square]]]]
+#delete it
+#[.VP [.V delete] [.DP [.NP [.N it]]]]
+#undo that
+#[.VP [.V undo] [.DP [.NP [.N that]]]]
+#clear the screen
+#[.VP clear-the-screen]
+#do that again
+#[.VP [.V-bar [.V do] [.DP [.NP [.N that]]]] [.Adv again]]
+#copy the square
+#[.VP [.V copy] [.DP [.D the] [.NP [.N square]]]]
+#copy it
+#[.VP [.V copy] [.DP [.NP [.N it]]]]
+#move the square left
+#[.VP [.V-bar [.V move] [.DP [.D the] [.NP [.N square]]]] [.Adv left]]
+#move it left
+#[.VP [.V-bar [.V move] [.DP [.NP [.N it]]]] [.Adv left]]
+#move the circle to the left of the square
+#[.VP [.V-bar [.V move] [.DP [.D the] [.NP [.N circle]]]] [.PP [.P to-the-left-of] [.DP [.D the] [.NP [.N square]]]]]
+#put the circle on the left side of the square
+#[.VP [.V-bar [.V put] [.DP [.D the] [.NP [.N circle]]]] [.PP [.P on-the-left-side-of] [.DP [.D the] [.NP [.N square]]]]]
+#clear the screen and undo that
+#[.VP [.VP clear-the-screen] [.ConjP [.Conj and-t] [.VP [.V undo] [.DP [.NP [.N that]]]]]]
+#draw and copy a square
+#[.VP [.V-bar [.V draw] [.ConjP [.Conj and-et] [.V copy]]] [.DP [.D a] [.NP [.N square]]]]
