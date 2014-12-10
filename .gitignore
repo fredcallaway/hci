@@ -1,3 +1,5 @@
 *.pyc
 input.*
 .DS_Store
+fml
+bitpar
