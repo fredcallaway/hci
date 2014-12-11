@@ -266,7 +266,7 @@ class HistoryMap(dict):
         for (shapeID,shape) in self.iteritems():
             shapeVals=shape.getAttList().values()
             matchesThisShape=True
-            for (key,val) in attList:
+            for (key,val) in attList.iteritems():
                 if key in attrTypes:
                     if not val in shapeVals:
                         matchesThisShape = False
