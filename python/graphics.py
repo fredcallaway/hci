@@ -4,6 +4,28 @@ from Tkinter import *
 from copy import deepcopy
 import random as rand
 
+
+#constants for specifying attributes that are absolute, ie enumerated
+#for predicates used as shape descriptors
+attrTypes = ('kind','size','positioning','color')
+attrNames = (
+    ('oval','circle','rectangle','square','triangle'),
+    ('tall','short','wide','narrow','large','small'),
+    ('screenTop','screenBottom','screenLeft','screenRight','screenCenter'),
+    ('red','orange','yellow','green','blue','purple','white','black')
+)
+#The below lists have an associated changeHandlers and relativeHandlers lists
+#    which map from the change type to a function that accepts the associated change names
+#for predicates that change an attribute list but do not describe it 
+changeNames = (
+    ('up','down','left','right'), #movement
+    ('taller','shorter','wider','narrower','larger','smaller') #size change
+)
+#for 2-argument predicates that change an attribute list
+relativeNames = (
+    ('leftOf','rightOf','over','under','nextTo','insideOf')
+)
+
 #reference to the graphics canvas
 canvas = None
 def canvasHeight():
@@ -28,31 +50,6 @@ def smallModel():
     return [w/3,h/3]
 def proximityModel(centerDforAdjacent):
     return centerDforAdjacent*(1+0.8*rand.random())
-
-#contains the order of shapeID creations/updates
-class DrawOrder():
-    def __init__(self):
-        self.order=[]
-    #takes a shapeID
-    #update by adding a shapeID of the latest shape drawn
-    def add(self,shapeID):
-        self.order.append(shapeID)
-    # returns the latest shapeID in the list
-    def it(self):
-        if len(self.order)>0:
-            return self.order[len(self.order)-1]
-        else:
-            return None
-    #takes a list shapeIDs
-    #returns the latest shapeID in the order that is also in shapeIDs
-    def pickMostRecent(self,shapeIDList):
-        l = len(self.order)
-        i=l-1
-        while i>=0:
-            if self.order[i] in shapeIDList:
-                return self.order[i]
-            i-=1
-        return None
 
 class AttributeList(dict):
     def __init__(self,*args,**kw):
@@ -107,19 +104,14 @@ relationNames = (
 )
 """
 #constants for changing, relative absolutes
-changeTypes = (relMove, relSize)
-changeNames = (
-    ('up','down','left','right'),
-    ('taller','shorter','wider','narrower','larger','smaller')
-)
-#constants for specifying attributes that are absolute, ie enumerated
-attrTypes = ('kind','size','positioning','color')
-attrNames = (
-    ('oval','circle','rectangle','square','triangle'),
-    ('tall','short','wide','narrow','large','small'),
-    ('screenTop','screenBottom','screenLeft','screenRight','screenCenter'),
-    ('red','orange','yellow','green','blue','purple','white','black')
-)
+changeHandlers = (relMove, relSize)
+
+def reprocessSizeAttributes(attList):
+    [lw,lh] = largeModel()
+    [sw,sh] = smallModel()
+    [w,h] = attList.span
+
+
 def kindHandler(attList,command):
     attList['kind']=command
 def sizeHandler(attList,command):
@@ -168,16 +160,13 @@ attrHandlers = (kindHandler,sizeHandler,positioningHandler,colorHandler)
 #ie make2
 def updateAttList(attList,command):
     #check for relative changes
-    for i in range(len(changeTypes)):
+    for i in range(len(changeNames)):
         if command in changeNames[i]:
-            changeTypes[i](attList,command)
+            changeHandlers[i](attList,command)
             return
     #check for absolute changes
     setAttList(attList, command)
 
-relativeNames = (
-    ('leftOf','rightOf','over','under','nextTo','insideOf')
-)
 def relativePositioningHandler(attList,attList2,command):
     [x,y]=attList.center
     [x2,y2]=attList2.center
@@ -276,27 +265,47 @@ class HistoryMap(dict):
         matches=[]
         for (shapeID,shape) in self.iteritems():
             shapeVals=shape.getAttList().values()
-            if all(map(lambda x: x is None or x in shapeVals, searchVals)):
+            matchesThisShape=True
+            for (key,val) in attList:
+                if key in attrTypes:
+                    if not val in shapeVals:
+                        matchesThisShape = False
+                #elif key in 
+            if matchesThisShape:
                 matches.append(shapeID)
         return matches
+
+#contains the order of shapeID creations/updates
+class DrawOrder():
+    def __init__(self):
+        self.order=[]
+    #takes a shapeID
+    #update by adding a shapeID of the latest shape drawn
+    def add(self,shapeID):
+        self.order.append(shapeID)
+    # returns the latest shapeID in the list
+    def it(self):
+        if len(self.order)>0:
+            return self.order[len(self.order)-1]
+        else:
+            return None
+    #takes a list shapeIDs
+    #returns the latest shapeID in the order that is also in shapeIDs
+    def pickMostRecent(self,shapeIDList):
+        l = len(self.order)
+        i=l-1
+        while i>=0:
+            if self.order[i] in shapeIDList:
+                return self.order[i]
+            i-=1
+        return None
 
 
 database = HistoryMap() #history of objects drawn and current objects
 
-"""
-def reprocessAttributes(attList):
-    sh=canvasHeight()
-    sw=canvasWidth()
-    dim = attList['size']
-    if dim != None:
-        if dim is 'tall':
-
-    pos = attList['positioning']
-    if pos != None:
-        if pos is 'top':
-            attList.center=(0,sh*0.25)
-"""
 referenceOrder = DrawOrder()
+
+
 def drawAttList(attList):
     sh=canvasHeight()
     hsh=sh/2

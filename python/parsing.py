@@ -106,6 +106,17 @@ def label(cmd):
     return cmd
 
 
+def subMatchingParantheses(string,opening):
+    depth=1
+    for i in range(opening+1,len(string)-1):
+        if string[i] is '(':
+            depth+=1
+        if string[i] is ')':
+            depth-=1
+        if depth==0:
+            return string[opening+1:i-1]
+    return ""
+
 def parse(string):
     """parses a string of logical notation, calling functions as necessary
 
@@ -126,10 +137,14 @@ def parse(string):
 
     # operators
     elif string.find('\gamma') == 0:
-        return gamma(string[7],string[9:-1])
+        #return gamma(string[7],string[9:-1])
+        firstParan = string.find('(')
+        return gamma(string[7:firstParan-1],subMatchingParantheses(string,firstParan))
     elif string.find('\iota') == 0:
         # treating iota as gamma for now
-        return iota(string[6],string[8:-1])
+        firstParan = string.find('(')
+        return iota(string[6:firstParan-1],subMatchingParantheses(string,firstParan))
+        #return iota(string[6],string[8:-1])
 
     # function application
     else:
