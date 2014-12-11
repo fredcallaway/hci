@@ -2,6 +2,7 @@
 
 from Tkinter import *
 from copy import deepcopy
+import random as rand
 
 #reference to the graphics canvas
 canvas = None
@@ -25,7 +26,8 @@ def largeModel():
 def smallModel():
     [w,h]=standardSizes()
     return [w/3,h/3]
-
+def proximityModel(centerDforAdjacent):
+    return centerDforAdjacent*(1+0.8*rand.random())
 
 #contains the order of shapeID creations/updates
 class DrawOrder():
@@ -173,20 +175,43 @@ def updateAttList(attList,command):
     #check for absolute changes
     setAttList(attList, command)
 
-def updateAttList2(attList1,attList2,command):
-    pass
-"""
-def relativePositioningHandler(attList1,attList2,command):
-    [x1,y1]=attList1.center
+relativeNames = (
+    ('leftOf','rightOf','over','under','nextTo','insideOf')
+)
+def relativePositioningHandler(attList,attList2,command):
+    [x,y]=attList.center
     [x2,y2]=attList2.center
-    [w1,h1]=attList1.span
+    [w,h]=attList.span
     [w2,h2]=attList2.span
     if command is None:
         return
     elif command is 'leftOf':
+        d=proximityModel((w+w2)/2)
+        x=x2-d
+    elif command is 'rightOf' or command is 'nextTo':
+        d=proximityModel((w+w2)/2)
+        x=x2+d
+    elif command is 'over':
+        d=proximityModel((h+h2)/2)
+        y=y2+d
+    elif command is 'under':
+        d=proximityModel((h+h2)/2)
+        y=y2-d
+    elif command is 'insideOf':
+        #TODO make this re-layer attList over attList2!!
+        [x,y]=[x2,y2]
+    attList.center=[x,y]
+relativeHandlers = (relativePositioningHandler)
 
-    pass
-"""
+def updateAttList2(attList,attList2,command):
+    for i in range(len(relativeNames)):
+        if command in relativeNames[i]:
+            relativeHandlers[i](attList,attList2,command)
+    
+
+
+
+
 #use this function when creating a new Attributes
 #ie make1
 def setAttList(attList, command):

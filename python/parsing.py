@@ -329,16 +329,30 @@ def applyPredicate(id,cmd):
 
     elif type(id) is HypotheticalShape:
         attList = id.getAttList()
-        shapeID=pickShape(attList)
-        g.updateShape(shapeID,attList)
+        try:
+            shapeID=pickShape(attList)
+            g.updateShape(shapeID,attList)
+        except IndexError:
+            return
+
+    elif type(id) is g.AttributeList:
+        attList=id
+        try:
+            shapeID=pickShape(attList)
+            g.updateShape(shapeID,attList)
+        except IndexError:
+            return
+
+    elif type(id) is str:
+         # local var
+        attList = local_vars[id]
+        g.updateAttList(attList, cmd)
 
     elif isinstance(id, Set):
         for shapeID in id.getShapeIDs():
             applyPredicate(shapeID, cmd)
-    
-    else: # local var
-        attList = local_vars[id]
-        g.updateAttList(attList, cmd)
+    else:
+        print "Cannot apply predicate to unknown object 'id'"
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
