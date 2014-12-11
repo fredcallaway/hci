@@ -1,7 +1,6 @@
-
 #!/usr/bin/python
-
 """This module contains the parsing functions from predicate logic to graphics.py calls"""
+
 import sys
 import subprocess
 import graphics as g
@@ -36,7 +35,12 @@ class Set():
         return matches
 
 def runMainParser(cmd):
-    """updates one or more shapes in the gui based on user input"""
+    """updates one or more shapes in the gui based on user input
+
+    uses the Subprocess module to open a Shell and run bitpar/bitpar, 
+    lambda/HCI-auto.jar, and other shell commands to generate a 
+    lambda parsing of the user input"""
+
     global local_vars
     local_vars={}
     # pre-process phrase to group keyword sequences
@@ -79,6 +83,13 @@ def hyphenate(cmd):
     cmd = re.sub('on top of','on-top-of',cmd)
     cmd = re.sub('inside of','inside-of',cmd)
     cmd = re.sub('next to','next-to',cmd)
+    cmd = re.sub('at the top','at-the-top',cmd)
+    cmd = re.sub('to the top','to-the-top',cmd)
+    cmd = re.sub('at the bottom','at-the-bottom',cmd)
+    cmd = re.sub('to the bottom','to-the-bottom',cmd)
+    cmd = re.sub('in the middle','in-the-middle',cmd)
+    cmd = re.sub('to the middle','to-the-middle',cmd)
+
     cmd = re.sub('and t','and-t',cmd)
     cmd = re.sub('and et','and-et',cmd)
     cmd = re.sub('clear the screen','clear-the-screen',cmd)
@@ -102,6 +113,8 @@ def label(cmd):
     cmd = re.sub('(draw.*)one','\\1one1',cmd)
     cmd = re.sub('(make1.*)one','\\1one1',cmd)
     cmd = re.sub('(make2.*)one','\\1one2',cmd)
+    cmd = re.sub('(move.*)one','\\1one2',cmd)
+    cmd = re.sub('(hide.*)one','\\1one2',cmd)
     cmd = '[result ' + cmd + ']' #dummy function for plop
     return cmd
 
@@ -129,8 +142,7 @@ def parse(string):
 
     # variables
     if string in local_vars: # e.g. 'y'
-        print "Indexing '"+string+"' in local_vars"
-        return local_vars[string]
+        return string
     elif string == 'it':
         # print 'it: ',references[0]
         return g.it
@@ -172,20 +184,6 @@ def hide(id):
     else: # id refers to hypothetical shape
         shapeID=pickShape(local_vars[id])
         g.hide(g.database[shapeID])
-    
-def one1(var):
-    """fills unspecified attributes of var with attributes of most recently mentioned shape"""
-    varAttList = local_vars[var]
-    itAttList = g.getIt()
-    local_vars[var] = g.AttributeList(itAttList.items() + varAttList.items())
-
-def one2(var):
-    """fills unspecified attributes of var with attributes of 
-    most recently mentioned shape that matches attributes in var"""
-    varAttList = local_vars[var]
-    options = g.database.findMatches(local_vars[var])
-    shapeAttList = g.database[g.referenceOrder.pickMostRecent(options)].getAttList()
-    local_vars[var] = g.AttributeList(shapeAttList.items()+ varAttList.items())
 
 #OPERATORS:
 def gamma(var, string):
@@ -216,6 +214,21 @@ def iota(var, string):
         if len(matches) != 1: raise ParseError('iota ambiguity')
         shapeID = matches[0]
         return shapeID
+
+#PRAGMATIC
+def one1(var):
+    """fills unspecified attributes of var with attributes of most recently mentioned shape"""
+    varAttList = local_vars[var]
+    itAttList = g.getIt()
+    local_vars[var] = g.AttributeList(itAttList.items() + varAttList.items())
+
+def one2(var):
+    """fills unspecified attributes of var with attributes of 
+    most recently mentioned shape that matches attributes in var"""
+    varAttList = local_vars[var]
+    options = g.database.findMatches(local_vars[var])
+    shapeAttList = g.database[g.referenceOrder.pickMostRecent(options)].getAttList()
+    local_vars[var] = g.AttributeList(shapeAttList.items()+ varAttList.items())
 
 #COLORS:
 def red(id):
@@ -248,6 +261,7 @@ def large(id):
     applyPredicate(id,'big')
 def small(id):
     applyPredicate(id,'small')
+
 def taller(id):
     applyPredicate(id,'taller')
 def shorter(id):
@@ -272,6 +286,18 @@ def down(id):
     applyPredicate(id,'down')
 def over(id):
     applyPredicate(id,'over')
+
+def screenTop(id):
+    applyPredicate(id,'screenTop')
+def screenBottom(id):
+    applyPredicate(id,'screenBottom')
+def screenLeft(id):
+    applyPredicate(id,'screenLeft')
+def screenRight(id):
+    applyPredicate(id,'screenRight')
+def screenCenter(id):
+    applyPredicate(id,'screenCenter')
+
 
 # def leftOf(id1,id2):
 #     shape1=getShape(id1)
