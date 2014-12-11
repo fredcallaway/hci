@@ -1,9 +1,7 @@
+
 #!/usr/bin/python
 
-#This module contains the parsing functions
-# from Lambda Calculator to graphics calls
-# It imports attribute lists and graphics objects
-# used by graphics
+"""This module contains the parsing functions from predicate logic to graphics.py calls"""
 import sys
 import subprocess
 import graphics as g
@@ -30,7 +28,7 @@ def runMainParser(cmd):
     """translates user input into logical notation"""
     global local_vars
     local_vars={}
-    cmd = clean(cmd)
+    cmd = hyphenate(cmd)
     # bitpar
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
     cmd = re.sub('\n','',cmd)
@@ -47,22 +45,29 @@ def runMainParser(cmd):
     lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print 'logic: '+lambdaCalc_output
-    parse(lambdaCalc_output)
+    # parse(lambdaCalc_output)
 
-def clean(cmd):
+def hyphenate(cmd):
     """returns cmd with phrase substitutions for easier parsing"""
-    cmd = re.sub('next to', 'next-to', cmd)
-    cmd = re.sub('on top of', 'on-top-of', cmd)
+    cmd = re.sub('at the top of the screen','at-the-top-of-the-screen',cmd)
+    cmd = re.sub('at the bottom of the screen','at-the-bottom-of-the-screen',cmd)
+    cmd = re.sub('on the left side of the screen','on-the-left-side-of-the-screen',cmd)
+    cmd = re.sub('on the right side of the screen','on-the-right-side-of-the-screen',cmd)
+    cmd = re.sub('on the left side of','on-the-left-side-of',cmd)
+    cmd = re.sub('to the left side of','to-the-left-side-of',cmd)
     cmd = re.sub('to the left of','to-the-left-of',cmd)
     cmd = re.sub('to the left','to-the-left',cmd)
-    cmd = re.sub('to the left side of','to-the-left-side-of',cmd)
+    cmd = re.sub('to the right side of','to-the-right-side-of',cmd)
+    cmd = re.sub('on the right side of','on-the-right-side-of',cmd)
     cmd = re.sub('to the right of','to-the-right-of',cmd)
     cmd = re.sub('to the right','to-the-right',cmd)
-    cmd = re.sub('to the right side of','to-the-right-side-of',cmd)
-    cmd = re.sub('on top of','on-top-of',cmd)
-    cmd = re.sub('next to','next-to',cmd)
-    cmd = re.sub('inside of','inside-of',cmd)
     cmd = re.sub('in the middle of','in-the-middle-of',cmd)
+    cmd = re.sub('on top of','on-top-of',cmd)
+    cmd = re.sub('inside of','inside-of',cmd)
+    cmd = re.sub('next to','next-to',cmd)
+    cmd = re.sub('and t','and-t',cmd)
+    cmd = re.sub('and et','and-et',cmd)
+    cmd = re.sub('clear the screen','clear-the-screen',cmd)
 
     return cmd
 

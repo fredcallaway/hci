@@ -41,31 +41,51 @@ define black: Lx[black(x)]
 
 #Sizes
 
-define big: Lx[big(x)]
-define bigger: Lx[big(x)]
-define enlarge: Lx[big(x)]
+define big: Lx[large(x)]
+define large: Lx[large(x)]
 define small: Lx[small(x)]
-define smaller: Lx[small(x)]
 define wide: Lx[wide(x)]
-define wider: Lx[wide(x)]
+define narrow: Lx[narrow(x)]
 define tall: Lx[tall(x)]
-define taller: Lx[tall(x)]
 define short: Lx[short(x)]
-define shorter: Lx[short(x)]
+
+define bigger: Lx[larger(x)]
+define larger: Lx[larger(x)]
+define enlarge: Lx[larger(x)]
+define smaller: Lx[smaller(x)]
+define wider: Lx[wider(x)]
+define narrower: Lx[narrower(x)]
+define taller: Lx[taller(x)]
+define shorter: Lx[shorter(x)]
 
 #Screen Zones
 
-#'on-the-X-side-of-the-screen'
+#Screen Zones defined in hci.lex as PPs
 #Ex: make1 a circle on the left side of the screen
-#Ex: make1 a circle on the right side of the screen
+#Ex: make1 a circle at the top of the screen
+#Note: screen\Left must be written with escape character so that capital L isn't treated as a lambda
 define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
 define on-the-right-side-of-the-screen: Lx[screenRight(x)]
-
-#'at-the-X-of-the-screen'
-#Ex: make1 a circle at the top of the screen
-#Ex: make1 a circle at the bottom of the screen
 define at-the-top-of-the-screen: Lx[screenTop(x)]
 define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
+
+#Screen Zones defined in hci.lex as ADVs
+#Ex: 'put it in the middle'
+#Ex: 'move it to the top'
+#Ex: 'move it to the right side of the screen' <--For some weird reason these parses as PPs not ADVs, despite their definition in hci.lex. As such, I've commented them out.
+define at-the-top: Lx[screenTop(x)]
+define to-the-top: Lx[screenTop(x)]
+#define to-the-top-of-the-screen: Lx[screenTop(x)]
+define at-the-bottom: Lx[screenBottom(x)]
+define to-the-bottom: Lx[screenBottom(x)]
+#define to-the-bottom-of-the-screen: Lx[screenBottom(x)]
+define in-the-middle: Lx[screenMiddle(x)]
+define to-the-middle: Lx[screenMiddle(x)]
+#define in-the-middle-of-the-screen: Lx[screenMiddle(x)]
+#define to-the-middle-of-the-screen: Lx[screenMiddle(x)]
+#Note: screen\Left must be written with escape character so that capital L isn't treated as a lambda
+#define to-the-left-side-of-the-screen: Lx[screen\Left(x)]
+#define to-the-right-side-of-the-screen: Lx[screenRight(x)]
 
 #Directional Movements
 
@@ -166,7 +186,7 @@ define another: LP[Gx(P(x))]
 #define one1: Lx[itShape(x)]
 #Version of one1 that preserves all unchanged parameters in new object
 #Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
-define one1: Lx[itParameters(x)]
+define one1: Lx[one1(x)]
 
 #one2: for use with make2
 #Ex: 'make2 the blue one green'
