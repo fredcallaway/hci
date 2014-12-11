@@ -13,41 +13,41 @@ gns = {}
 lns = {}
 ns={}
 def foo():
-    global alst
-    alst=g.AttributeList()
-    print 'alst=AttributeList()'
-    g.setAttList(alst,'oval')
-    g.setAttList(alst,'green')
-    g.createShape(alst)
+	global alst
+	alst=g.AttributeList()
+	print 'alst=AttributeList()'
+	g.setAttList(alst,'oval')
+	g.setAttList(alst,'green')
+	g.createShape(alst)
 def runCodeParser(cmd):
-    """Parses python code instead of natural lanugage"""
-    global ns,gns,lns
-    code=compile(cmd,'<string>','exec')
-    with stdoutIO() as (out):
-        #ns['it']=g.it
-        gns.update(globals())
-        lns.update(locals())
-        exec cmd in gns,lns
-    out.seek(0)
-    cont = out.read()
-    out.close()
-    lc=len(cont)
-    
-    # err.seek(0)
-    # e=err.read()
-    # err.close()
-    # le=len(e)
-
-    # if le>0 and e[le-1]=='\n':
-    #     e=e[0:(le-1)]
+	"""Parses python code instead of natural lanugage"""
+	global ns,gns,lns
+	code=compile(cmd,'<string>','exec')
+	with stdoutIO() as (out):
+		#ns['it']=g.it
+		gns.update(globals())
+		lns.update(locals())
+		exec cmd in gns,lns
+	out.seek(0)
+	cont = out.read()
+	out.close()
+	lc=len(cont)
 	
-    if lc>0 and cont[lc-1]=='\n':
-        cont=cont[0:(lc-1)]
+	# err.seek(0)
+	# e=err.read()
+	# err.close()
+	# le=len(e)
 
-    if lc>0:# or le>0:
-        return (cont)#,e)
-    else:
-        return None
+	# if le>0 and e[le-1]=='\n':
+	#     e=e[0:(le-1)]
+	
+	if lc>0 and cont[lc-1]=='\n':
+		cont=cont[0:(lc-1)]
+
+	if lc>0:# or le>0:
+		return (cont)#,e)
+	else:
+		return None
 
 # Some local variables
 tkWindow = None
@@ -90,7 +90,7 @@ def cmdLineHistoryUp(event):
 #TODO: define commands that short-circuit parsing, like "Undo"
 
 def cmdLineCallback(event):
-    """controls the behavior of the cmd line interface"""
+	"""controls the behavior of the cmd line interface"""
 	global tkWindow,main_frame
 	global cmd_history,cmd_index
 	cmd = main_frame.entry.get()
@@ -146,4 +146,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()  
+	main()  

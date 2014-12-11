@@ -246,6 +246,7 @@ def large(id):
     applyPredicate(id,'big')
 def small(id):
     applyPredicate(id,'small')
+
 def taller(id):
     applyPredicate(id,'taller')
 def shorter(id):
@@ -270,6 +271,18 @@ def down(id):
     applyPredicate(id,'down')
 def over(id):
     applyPredicate(id,'over')
+
+def screenTop(id):
+    applyPredicate(id,'screenTop')
+def screenBottom(id):
+    applyPredicate(id,'screenBottom')
+def screenLeft(id):
+    applyPredicate(id,'screenLeft')
+def screenRight(id):
+    applyPredicate(id,'screenRight')
+def screenCenter(id):
+    applyPredicate(id,'screenCenter')
+
 
 # def leftOf(id1,id2):
 #     shape1=getShape(id1)
