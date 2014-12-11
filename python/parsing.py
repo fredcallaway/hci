@@ -127,7 +127,7 @@ def parse(string):
         - these variables are tied to an attributeList"""
     
     global local_vars
-    # print "parse("+string+")"
+    print "parse("+string+")"
 
     # variables
     if string in local_vars: # e.g. 'y'
