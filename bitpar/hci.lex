@@ -1,4 +1,4 @@
-screen	.N 1
+#screen	.N 1
 circle	.N 1
 square	.N 1
 triangle	.N 1
@@ -34,9 +34,21 @@ shorter	.Adj 1
 on-the-left-side-of-the-screen	.PP 1
 on-the-right-side-of-the-screen	.PP 1
 at-the-top-of-the-screen	.PP 1
-on-the-top-of-the-screen	.PP 1
 at-the-bottom-of-the-screen	.PP 1
-on-the-bottom-of-the-screen	.PP 1
+
+at-the-top	.Adv 1
+to-the-top	.Adv 1
+at-the-bottom	.Adv 1
+to-the-bottom	.Adv 1
+in-the-middle	.Adv 1
+to-the-middle	.Adv 1
+
+#to-the-top-of-the-screen	.Adv 1
+#to-the-bottom-of-the-screen	.Adv 1
+#in-the-middle-of-the-screen	.Adv 1
+#to-the-middle-of-the-screen	.Adv 1
+#to-the-left-side-of-the-screen	.Adv 1
+#to-the-right-side-of-the-screen	.Adv 1
 
 left	.Adv 1
 to-the-left	.Adv 1

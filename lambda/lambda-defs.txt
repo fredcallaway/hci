@@ -60,20 +60,32 @@ define shorter: Lx[shorter(x)]
 
 #Screen Zones
 
-#'on-the-X-side-of-the-screen'
+#Screen Zones defined in hci.lex as PPs
 #Ex: make1 a circle on the left side of the screen
-#Ex: make1 a circle on the right side of the screen
+#Ex: make1 a circle at the top of the screen
 #Note: screen\Left must be written with escape character so that capital L isn't treated as a lambda
 define on-the-left-side-of-the-screen: Lx[screen\Left(x)]
 define on-the-right-side-of-the-screen: Lx[screenRight(x)]
-
-#'at-the-X-of-the-screen' & 'on-the-X-of-the-screen'
-#Ex: make1 a circle at the top of the screen
-#Ex: make1 a circle at the bottom of the screen
 define at-the-top-of-the-screen: Lx[screenTop(x)]
-define on-the-top-of-the-screen: Lx[screenTop(x)]
 define at-the-bottom-of-the-screen: Lx[screenBottom(x)]
-define on-the-bottom-of-the-screen: Lx[screenBottom(x)]
+
+#Screen Zones defined in hci.lex as ADVs
+#Ex: 'put it in the middle'
+#Ex: 'move it to the top'
+#Ex: 'move it to the right side of the screen' <--For some weird reason these parses as PPs not ADVs, despite their definition in hci.lex. As such, I've commented them out.
+define at-the-top: Lx[screenTop(x)]
+define to-the-top: Lx[screenTop(x)]
+#define to-the-top-of-the-screen: Lx[screenTop(x)]
+define at-the-bottom: Lx[screenBottom(x)]
+define to-the-bottom: Lx[screenBottom(x)]
+#define to-the-bottom-of-the-screen: Lx[screenBottom(x)]
+define in-the-middle: Lx[screenMiddle(x)]
+define to-the-middle: Lx[screenMiddle(x)]
+#define in-the-middle-of-the-screen: Lx[screenMiddle(x)]
+#define to-the-middle-of-the-screen: Lx[screenMiddle(x)]
+#Note: screen\Left must be written with escape character so that capital L isn't treated as a lambda
+#define to-the-left-side-of-the-screen: Lx[screen\Left(x)]
+#define to-the-right-side-of-the-screen: Lx[screenRight(x)]
 
 #Directional Movements
 
