@@ -1,4 +1,7 @@
 #!/usr/bin/python
+"""Gui is a Tkinter Entry object cmd line interface coupled with a Tkinter Canvas object 
+for display and Text object for history. The cmd line accepts natural language input
+and the Canvas serves as the graphical interface. """
 
 from Tkinter import *
 

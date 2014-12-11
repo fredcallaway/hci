@@ -1,5 +1,6 @@
 #!/usr/bin/python
-
+"""Main handles Tk window and frame; initializes graphics and callbacks
+it calls runMainParser() from the parsing module to initiate Canvas state change"""
 #import graphics
 from Tkinter import *
 from window_management import MainFrame
@@ -19,6 +20,7 @@ def foo():
     g.setAttList(alst,'green')
     g.createShape(alst)
 def runCodeParser(cmd):
+    """Parses python code instead of natural lanugage"""
     global ns,gns,lns
     code=compile(cmd,'<string>','exec')
     with stdoutIO() as (out):
@@ -88,6 +90,7 @@ def cmdLineHistoryUp(event):
 #TODO: define commands that short-circuit parsing, like "Undo"
 
 def cmdLineCallback(event):
+    """controls the behavior of the cmd line interface"""
 	global tkWindow,main_frame
 	global cmd_history,cmd_index
 	cmd = main_frame.entry.get()

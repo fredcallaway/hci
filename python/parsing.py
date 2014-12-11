@@ -1,7 +1,6 @@
-
 #!/usr/bin/python
-
 """This module contains the parsing functions from predicate logic to graphics.py calls"""
+
 import sys
 import subprocess
 import graphics as g
@@ -36,7 +35,12 @@ class Set():
         return matches
 
 def runMainParser(cmd):
-    """updates one or more shapes in the gui based on user input"""
+    """updates one or more shapes in the gui based on user input
+
+    uses the Subprocess module to open a Shell and run bitpar/bitpar, 
+    lambda/HCI-auto.jar, and other shell commands to generate a 
+    lambda parsing of the user input"""
+
     global local_vars
     local_vars={}
     # pre-process phrase to group keyword sequences
