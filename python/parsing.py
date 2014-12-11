@@ -7,7 +7,7 @@ import subprocess
 import graphics as g
 import random
 import re
-local_vars = {}
+local_vars = {} #map from vars to attLists and Sets
 
 class ParseError(Exception):
     """an error that arises during parsing"""
@@ -24,11 +24,23 @@ class HypotheticalShape():
     def getAttList(self):
         return local_vars[self.var]
 
+class Set():
+    """represents a set of shapeIDs as defined by an attList"""
+    
+    def __init__(self,var):
+        assert type(var) is str
+        self.attList = local_vars[var]
+        local_vars[var] = self
+    def getShapeIDs(self):
+        matches = g.database.findMatches(self.attList)
+        return matches
+
 def runMainParser(cmd):
-    """translates user input into logical notation"""
+    """updates one or more shapes in the gui based on user input"""
     global local_vars
     local_vars={}
     cmd = hyphenate(cmd)
+    cmd = pluralize(cmd)
     # bitpar
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
     cmd = re.sub('\n','',cmd)
@@ -41,11 +53,11 @@ def runMainParser(cmd):
     subprocess.call("java -jar ../lambda/HCI-auto.jar ../lambda/input.txt > ../lambda/input.tex",shell=True)
     subprocess.call("make -C ../lambda input.fml",shell=True)
     fml = subprocess.check_output('cat ../lambda/input.fml',shell=True)[:-1]
-    if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
+    if fml == '' or fml == '  {result \\ $tt$ \\': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
     print 'logic: '+lambdaCalc_output
-    # parse(lambdaCalc_output)
+    parse(lambdaCalc_output)
 
 def hyphenate(cmd):
     """returns cmd with phrase substitutions for easier parsing"""
@@ -68,13 +80,21 @@ def hyphenate(cmd):
     cmd = re.sub('and t','and-t',cmd)
     cmd = re.sub('and et','and-et',cmd)
     cmd = re.sub('clear the screen','clear-the-screen',cmd)
+    return cmd
 
+def pluralize(cmd):
+    """returns: cmd with plural 's' separated by a space"""
+    # in the future this could be automated
+    cmd = re.sub('circles','circle s',cmd)
+    cmd = re.sub('squares','square s',cmd)
+    cmd = re.sub('triangles','triangle s',cmd)
+    cmd = re.sub('ovals','oval s',cmd)
+    cmd = re.sub('rectangles','rectangle s',cmd)
+    cmd = re.sub('one2s','one2 s',cmd)
     return cmd
 
 def label(cmd):
-    """applies labels to differentiate synonyms
-
-    see lambda-defs.txt for explanation of labels"""
+    """applies labels to differentiate synonyms"""
     cmd = cmd.replace('make][.DP', 'make1][.NP')
     cmd = cmd.replace('make][.SC', 'make2][.SC')
     cmd = re.sub('(draw.*)one','\\1one1',cmd)
@@ -136,16 +156,19 @@ def hide(id):
         shapeID=pickShape(local_vars[id])
         g.hide(g.database[shapeID])
     
-def itParamaters(var):
+def one1(var):
     """fills unspecified attributes of var with attributes of most recently mentioned shape"""
     varAttList = local_vars[var]
     itAttList = g.getIt()
-    local_vars[var] = dict(itAttList.items() + varAttList.items())
+    local_vars[var] = g.AttributeList(itAttList.items() + varAttList.items())
 
 def one2(var):
-    """returns: most recently mentioned shape with properties in shape"""
-    options = g.findMatches(local_vars[var])
-    return g.referenceOrder.pickMostRecent(options)
+    """fills unspecified attributes of var with attributes of 
+    most recently mentioned shape that matches attributes in var"""
+    varAttList = local_vars[var]
+    options = g.database.findMatches(local_vars[var])
+    shapeAttList = g.database[g.referenceOrder.pickMostRecent(options)].getAttList()
+    local_vars[var] = g.AttributeList(shapeAttList.items()+ varAttList.items())
 
 #OPERATORS:
 def gamma(var, string):
@@ -162,16 +185,20 @@ def gamma(var, string):
 
 def iota(var, string):
     """returns: shapeID of the unique shape matching attributes in string
+                or if var is defined to be a Set, return the Set
 
        throws error: "iota ambiguity" if there is not a unique shape"""
     global local_vars
     local_vars[var]=g.AttributeList()
     for substring in string.split(" & "):
         parse(substring)
-    matches = g.database.findMatches(local_vars[var])
-    if len(matches) != 1: raise ParseError('iota ambiguity')
-    shapeID = matches[0]
-    return shapeID
+    if isinstance(local_vars[var], Set):
+        return local_vars[var]
+    else: 
+        matches = g.database.findMatches(local_vars[var])
+        if len(matches) != 1: raise ParseError('iota ambiguity')
+        shapeID = matches[0]
+        return shapeID
 
 #COLORS:
 def red(id):
@@ -200,10 +227,22 @@ def wide(id):
     applyPredicate(id,'wide')
 def narrow(id):
     applyPredicate(id,'narrow')
-def big(id):
+def large(id):
     applyPredicate(id,'big')
 def small(id):
     applyPredicate(id,'small')
+def taller(id):
+    applyPredicate(id,'taller')
+def shorter(id):
+    applyPredicate(id,'shorter')
+def wider(id):
+    applyPredicate(id,'wideer')
+def narrower(id):
+    applyPredicate(id,'narrower')
+def larger(id):
+    applyPredicate(id,'biger')
+def smaller(id):
+    applyPredicate(id,'smaller')
 
 #LOCATIONS:
 def left(id):
@@ -214,6 +253,8 @@ def up(id):
     applyPredicate(id,'up')
 def down(id):
     applyPredicate(id,'down')
+def over(id):
+    applyPredicate(id,'over')
 
 # def leftOf(id1,id2):
 #     shape1=getShape(id1)
@@ -243,20 +284,17 @@ def square(id):
     applyPredicate(id,'square')
 def triangle(id):
     applyPredicate(id,'triangle')
+def oval(id):
+    applyPredicate(id,'triangle')
+def rectangle(id):
+    applyPredicate(id,'triangle')
     
 
 #HELPERS:
-# def getShape(id):
-#     if type(id) is int: # shapeID
-#         return shapes[id].get()
-#     elif type(id) is str: and len(id) == 1: # local var
-#         return local_vars[id]
-#     else: # name
-#         return shapes[g.names[id]].get()
 
 def pickShape(attList):
     """returns: random shapeID for a shape matching attList"""
-    options = g.findMatches(attList)
+    options = g.database.findMatches(attList)
     return random.choice(options)
     
 def applyPredicate(id,cmd):
@@ -266,6 +304,7 @@ def applyPredicate(id,cmd):
         - shapeID: updates associated shape with cmd
         - HypotheticalShape: picks a random matching shape
           and updates it with cmd
+        - Set: updates all shapeIDs with cmd
         - var: updates attList associated with var"""
 
     if type(id) is int: # shapeID
@@ -278,6 +317,10 @@ def applyPredicate(id,cmd):
         shapeID=pickShape(attList)
         g.updateShape(shapeID,attList)
 
+    elif isinstance(id, Set):
+        for shapeID in id.getShapeIDs():
+            applyPredicate(shapeID, cmd)
+    
     else: # local var
         attList = local_vars[id]
         g.updateAttList(attList, cmd)

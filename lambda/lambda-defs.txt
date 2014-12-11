@@ -5,7 +5,7 @@ constants of type e : it
 constants of type e : them
 constants of type t : that
 constants of type t : clear
-constants of type <e,e> : set
+#constants of type <e,e> : Set
 variables of type e : a-o r-z
 variables of type t : p q
 variables of type <et> : P Q
@@ -197,7 +197,8 @@ define one2: Lx[one2(x)]
 #ones: for use with make2
 #Ex: 'make2 the blue ones green'
 #ones iterates over the predicate in P to determine all of the entities in the on-screen list that satisfy P
-define s: LPLx[P(set(x))]
+#define s: LPLx[P(Set(x))]
+define s: Lx[Set(x)]
 
 #An 'and' for all occasions
 #define and-e: LaLb[a & b]
