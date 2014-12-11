@@ -190,7 +190,9 @@ define one1: Lx[one1(x)]
 
 #one2: for use with make2
 #Ex: 'make2 the blue one green'
-define one2: LP.P
+#define one2: LP.P
+define one2: Lx[one2(x)]
+
 
 #ones: for use with make2
 #Ex: 'make2 the blue ones green'
