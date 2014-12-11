@@ -87,10 +87,11 @@ def relSize(attList,command):
         w *= 1.3
     elif command is 'narrower':
         w /= 1.3
-    elif command is 'larger' or command is 'bigger':
+    elif command is 'larger': # or command is 'bigger' or command is 'enlarge':
+        # the other words are mapped to 'larger' by lambda calculator
         w *= 1.3
         h *= 1.3
-    elif command is 'smaller' or command:
+    elif command is 'smaller':
         w /= 1.3
         h /= 1.3
     else:
@@ -107,14 +108,14 @@ relationNames = (
 changeTypes = (relMove, relSize)
 changeNames = (
     ('up','down','left','right'),
-    ('taller','shorter','wider','narrower','larger','bigger','smaller')
+    ('taller','shorter','wider','narrower','larger','smaller')
 )
 #constants for specifying attributes that are absolute, ie enumerated
 attrTypes = ('kind','size','positioning','color')
 attrNames = (
     ('oval','circle','rectangle','square','triangle'),
     ('tall','short','wide','narrow','large','small'),
-    ('top','bottom','left','right'),
+    ('screenTop','screenBottom','screenLeft','screenRight','screenCenter'),
     ('red','orange','yellow','green','blue','purple','white','black')
 )
 def kindHandler(attList,command):
@@ -146,14 +147,16 @@ def positioningHandler(attList,command):
     [lx,rx]=horizontalModel()
     if command is None:
         return
-    elif command is 'top':
+    elif command is 'screenTop':
         y=ty
-    elif command is 'bottom':
+    elif command is 'screenBottom':
         y=by
-    elif command is 'left':
+    elif command is 'screenLeft':
         x=lx
-    elif command is 'right':
+    elif command is 'screenRight':
         x=rh
+    elif command is 'screenCenter':
+        [x,y]=[0,0]
     attList.center=[x,y]
 def colorHandler(attList,command):
     attList['color']=command
@@ -170,9 +173,20 @@ def updateAttList(attList,command):
     #check for absolute changes
     setAttList(attList, command)
 
-def updateAttList2(attList,attList2,command):
+def updateAttList2(attList1,attList2,command):
     pass
+"""
+def relativePositioningHandler(attList1,attList2,command):
+    [x1,y1]=attList1.center
+    [x2,y2]=attList2.center
+    [w1,h1]=attList1.span
+    [w2,h2]=attList2.span
+    if command is None:
+        return
+    elif command is 'leftOf':
 
+    pass
+"""
 #use this function when creating a new Attributes
 #ie make1
 def setAttList(attList, command):

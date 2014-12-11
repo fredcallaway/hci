@@ -28,6 +28,7 @@ def runMainParser(cmd):
     """translates user input into logical notation"""
     global local_vars
     local_vars={}
+    # pre-process phrase to group keyword sequences
     cmd = hyphenate(cmd)
     # bitpar
     cmd = subprocess.check_output("sh ../bitpar/parse '"+cmd+"'",shell=True)
@@ -44,6 +45,7 @@ def runMainParser(cmd):
     if fml == '': raise ParseError(cmd+' cannot be interpreted by lambda calculator')
     lambdaCalc_output=fml.split('true ')[1][:-2]
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
+        #lambda_output_history was never initialized
     print 'logic: '+lambdaCalc_output
     # parse(lambdaCalc_output)
 
@@ -96,8 +98,8 @@ def parse(string):
 
     # variables
     if string in local_vars: # e.g. 'y'
-        return string
-        print string
+        print "Indexing '"+string+"' in local_vars"
+        return local_vars[string]
     elif string == 'it':
         # print 'it: ',references[0]
         return g.it
