@@ -95,7 +95,7 @@ def parse(string):
         print string
     elif string == 'it':
         # print 'it: ',references[0]
-        return g.it()
+        return g.it
 
     # operators
     elif string.find('\gamma') == 0:

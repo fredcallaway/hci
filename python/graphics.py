@@ -103,7 +103,6 @@ relationNames = (
     ('leftOf','')
 )
 """
-#note that color is a catch-all type for names that don't match the above lists
 #constants for changing, relative absolutes
 changeTypes = (relMove, relSize)
 changeNames = (
