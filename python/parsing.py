@@ -258,7 +258,7 @@ def taller(id):
 def shorter(id):
     applyPredicate(id,'shorter')
 def wider(id):
-    applyPredicate(id,'wideer')
+    applyPredicate(id,'wider')
 def narrower(id):
     applyPredicate(id,'narrower')
 def larger(id):
