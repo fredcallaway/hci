@@ -195,7 +195,13 @@ def iota(var, string):
     if isinstance(local_vars[var], Set):
         return local_vars[var]
     else: 
-        matches = g.database.findMatches(local_vars[var])
+        lvar = local_vars[var]
+        if type(lvar) is g.AttributeList:
+            matches = g.database.findMatches(lvar)
+        elif type(lvar) is int:
+            matches = g.database.findMatches(g.database[lvar].getAttList())
+        else:
+            print "Cannot find matches for type %s"%type(lvar)
         if len(matches) != 1: raise ParseError('iota ambiguity')
         shapeID = matches[0]
         return shapeID
