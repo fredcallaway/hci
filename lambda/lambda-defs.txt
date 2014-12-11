@@ -186,7 +186,7 @@ define another: LP[Gx(P(x))]
 #define one1: Lx[itShape(x)]
 #Version of one1 that preserves all unchanged parameters in new object
 #Draw a big blue square. Make a red one. => A big red square. (Preserves bigness.)
-define one1: Lx[itParameters(x)]
+define one1: Lx[one1(x)]
 
 #one2: for use with make2
 #Ex: 'make2 the blue one green'

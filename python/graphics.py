@@ -171,6 +171,9 @@ def updateAttList(attList,command):
     #check for absolute changes
     setAttList(attList, command)
 
+def updateAttList2(attList,attList2,command):
+    pass
+
 #use this function when creating a new Attributes
 #ie make1
 def setAttList(attList, command):
