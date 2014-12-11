@@ -47,7 +47,7 @@ def runMainParser(cmd):
     #lambda_output_history.append(lambdaCalc_output) #out of scope. how do i fix this?
         #lambda_output_history was never initialized
     print 'logic: '+lambdaCalc_output
-    # parse(lambdaCalc_output)
+    parse(lambdaCalc_output)
 
 def hyphenate(cmd):
     """returns cmd with phrase substitutions for easier parsing"""
@@ -146,7 +146,7 @@ def itParamaters(var):
 
 def one2(var):
     """returns: most recently mentioned shape with properties in shape"""
-    options = g.findMatches(local_vars[var])
+    options = g.database.findMatches(local_vars[var])
     return g.referenceOrder.pickMostRecent(options)
 
 #OPERATORS:
@@ -258,7 +258,7 @@ def triangle(id):
 
 def pickShape(attList):
     """returns: random shapeID for a shape matching attList"""
-    options = g.findMatches(attList)
+    options = g.database.findMatches(attList)
     return random.choice(options)
     
 def applyPredicate(id,cmd):
@@ -277,12 +277,24 @@ def applyPredicate(id,cmd):
 
     elif type(id) is HypotheticalShape:
         attList = id.getAttList()
-        shapeID=pickShape(attList)
-        g.updateShape(shapeID,attList)
-
-    else: # local var
+        try:
+            shapeID=pickShape(attList)
+            g.updateShape(shapeID,attList)
+        except IndexError:
+            return
+    elif type(id) is g.AttributeList:
+        attList=id
+        try:
+            shapeID=pickShape(attList)
+            g.updateShape(shapeID,attList)
+        except IndexError:
+            return
+    elif type(id) is str:
+         # local var
         attList = local_vars[id]
         g.updateAttList(attList, cmd)
+    else:
+        print "Cannot apply predicate to unknown object 'id'"
 
 if __name__ == "__main__":
     # parse("draw(\gamma y(large(y) & square(y))).")
